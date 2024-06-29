@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class CrmMean extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'name',
     ];

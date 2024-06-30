@@ -28,9 +28,6 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('')
             ->login()
-            ->plugins([
-                ActivitylogPlugin::make(),
-            ])
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -54,6 +51,12 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+            ])
+            ->plugins([
+                ActivitylogPlugin::make()
+                    // ->authorize(fn() => auth()->user()->is_admin === true)
+                    ->navigationGroup('Tracking')
+                    ->navigationSort(29),
             ])
             ->authMiddleware([
                 Authenticate::class,

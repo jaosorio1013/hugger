@@ -24,6 +24,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'is_admin',
     ];
 
     /**
@@ -51,6 +52,9 @@ class User extends Authenticatable
 
     public function getActivitylogOptions(): LogOptions
     {
-        return LogOptions::defaults()->dontSubmitEmptyLogs();
+        return LogOptions::defaults()
+            ->useLogName('Usuario')
+            ->logFillable()
+            ->logOnlyDirty();
     }
 }

@@ -57,6 +57,9 @@ class DealDetail extends Model
 
     public function getActivitylogOptions(): LogOptions
     {
-        return LogOptions::defaults()->dontSubmitEmptyLogs();
+        return LogOptions::defaults()
+            ->useLogName('Detalle compra')
+            ->logFillable()
+            ->logOnlyDirty();
     }
 }

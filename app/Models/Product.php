@@ -20,6 +20,9 @@ class Product extends Model
 
     public function getActivitylogOptions(): LogOptions
     {
-        return LogOptions::defaults()->dontSubmitEmptyLogs();
+        return LogOptions::defaults()
+            ->useLogName('Producto')
+            ->logFillable()
+            ->logOnlyDirty();
     }
 }

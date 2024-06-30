@@ -42,6 +42,9 @@ class ClientContact extends Model
 
     public function getActivitylogOptions(): LogOptions
     {
-        return LogOptions::defaults()->dontSubmitEmptyLogs();
+        return LogOptions::defaults()
+            ->useLogName('Contacto')
+            ->logFillable()
+            ->logOnlyDirty();
     }
 }

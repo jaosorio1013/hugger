@@ -39,6 +39,9 @@ class ClientAction extends Model
 
     public function getActivitylogOptions(): LogOptions
     {
-        return LogOptions::defaults()->dontSubmitEmptyLogs();
+        return LogOptions::defaults()
+            ->useLogName('Acción')
+            ->logFillable()
+            ->logOnlyDirty();
     }
 }

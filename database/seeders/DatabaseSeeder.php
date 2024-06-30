@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             $this->call(ClientContactsSeeder::class);
         }
 
-
+        $this->call(DealsSeeder::class);
+        $this->call(ClientActionsSeeder::class);
     }
 }

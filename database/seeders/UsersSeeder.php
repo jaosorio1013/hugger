@@ -13,12 +13,14 @@ class UsersSeeder extends Seeder
             User::factory()->create([
                 'name' => 'Example',
                 'email' => 'test@example.com',
+                'is_admin' => true,
             ]);
         }
 
         User::factory()->create([
             'name' => 'Jhonatan',
             'email' => 'jaosorio1013@gmail.com',
+            'is_admin' => true,
         ]);
 
         $users = ['abundancia', 'alegria', 'hope'];

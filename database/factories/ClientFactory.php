@@ -15,18 +15,29 @@ class ClientFactory extends Factory
 
     public function definition(): array
     {
+        $userId = null;
+        if (rand(1, 10) % 2 === 0) {
+            $userId = User::inRandomOrder()->value('id');
+        }
+
+        $fontId = CrmFont::inRandomOrder()->value('id');
+        $meanId = CrmMean::inRandomOrder()->value('id');
+
+        $type = $this->faker->randomElement([Client::TYPE_NATURAL, Client::TYPE_COMPANY, Client::TYPE_ALLIED]);
+
         return [
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
             'name' => $this->faker->name(),
-            'nit' => $this->faker->word(),
+            'email' =>  $type === Client::TYPE_NATURAL ? $this->faker->safeEmail() : null,
+            'nit' => $this->faker->numberBetween(1000000, 9999999),
             'phone' => $this->faker->phoneNumber(),
             'address' => $this->faker->address(),
-            'type' => $this->faker->randomNumber(),
+            'type' => $type,
 
-            'user_id' => User::factory(),
-            'crm_font_id' => CrmFont::factory(),
-            'crm_mean_id' => CrmMean::factory(),
+            'user_id' => $userId,
+            'crm_font_id' => $fontId,
+            'crm_mean_id' => $meanId,
         ];
     }
 }

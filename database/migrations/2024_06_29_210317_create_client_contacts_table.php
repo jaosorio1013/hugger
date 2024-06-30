@@ -13,6 +13,7 @@ return new class extends Migration {
             $table->string('email')->nullable();
             $table->string('charge')->index()->nullable();
             $table->string('phone')->nullable();
+            $table->foreignId('client_id')->nullable();
             $table->foreignId('crm_font_id')->nullable();
             $table->foreignId('crm_mean_id')->nullable();
             $table->softDeletes();

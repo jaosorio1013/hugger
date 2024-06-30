@@ -13,6 +13,7 @@ return new class extends Migration {
             $table->string('name');
             $table->string('nit')->nullable();
             $table->string('phone')->nullable();
+            $table->string('email')->nullable();
             $table->string('address')->nullable();
             $table->unsignedTinyInteger('type')->default(Client::TYPE_NATURAL)->index();
             $table->foreignId('user_id')->nullable();

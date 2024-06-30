@@ -7,18 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ClientContact extends Model
+class ClientAction extends Model
 {
     use SoftDeletes, HasFactory;
 
     protected $fillable = [
-        'name',
-        'email',
-        'charge',
-        'phone',
         'client_id',
-        'crm_font_id',
-        'crm_mean_id',
+        'crm_action_id',
+        'crm_state_id',
+        'notes',
     ];
 
     public function client(): BelongsTo
@@ -26,13 +23,13 @@ class ClientContact extends Model
         return $this->belongsTo(Client::class);
     }
 
-    public function font(): BelongsTo
+    public function action(): BelongsTo
     {
-        return $this->belongsTo(CrmFont::class);
+        return $this->belongsTo(CrmAction::class);
     }
 
-    public function mean(): BelongsTo
+    public function state(): BelongsTo
     {
-        return $this->belongsTo(CrmMean::class);
+        return $this->belongsTo(CrmState::class);
     }
 }

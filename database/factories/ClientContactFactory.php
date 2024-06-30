@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Client;
 use App\Models\ClientContact;
 use App\Models\CrmFont;
 use App\Models\CrmMean;
@@ -14,6 +15,9 @@ class ClientContactFactory extends Factory
 
     public function definition(): array
     {
+        $fontId = CrmFont::inRandomOrder()->value('id');
+        $meanId = CrmMean::inRandomOrder()->value('id');
+
         return [
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
@@ -22,8 +26,9 @@ class ClientContactFactory extends Factory
             'charge' => $this->faker->word(),
             'phone' => $this->faker->phoneNumber(),
 
-            'crm_font_id' => CrmFont::factory(),
-            'crm_mean_id' => CrmMean::factory(),
+            'client_id' => Client::factory(),
+            'crm_font_id' => $fontId,
+            'crm_mean_id' => $meanId,
         ];
     }
 }

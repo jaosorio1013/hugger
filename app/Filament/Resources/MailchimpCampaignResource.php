@@ -30,13 +30,10 @@ class MailchimpCampaignResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Gestión';
-
-    protected static ?string $label = 'Campaña';
-
-    protected static ?string $pluralLabel = 'Campañas';
-
     protected static ?int $navigationSort = 19;
+    protected static ?string $label = 'Campaña';
+    protected static ?string $pluralLabel = 'Campañas';
+    protected static ?string $navigationGroup = 'Gestión';
 
     public static function form(Form $form): Form
     {
@@ -77,8 +74,8 @@ class MailchimpCampaignResource extends Resource
                 TrashedFilter::make(),
             ])
             ->actions([
-                EditAction::make(),
-                DeleteAction::make(),
+                // EditAction::make()->label(''),
+                DeleteAction::make()->label(''),
                 RestoreAction::make(),
                 ForceDeleteAction::make(),
             ])
@@ -95,8 +92,8 @@ class MailchimpCampaignResource extends Resource
     {
         return [
             'index' => Pages\ListMailchimpCampaigns::route('/'),
-            'create' => Pages\CreateMailchimpCampaign::route('/create'),
-            'edit' => Pages\EditMailchimpCampaign::route('/{record}/edit'),
+            // 'create' => Pages\CreateMailchimpCampaign::route('/create'),
+            // 'edit' => Pages\EditMailchimpCampaign::route('/{record}/edit'),
         ];
     }
 

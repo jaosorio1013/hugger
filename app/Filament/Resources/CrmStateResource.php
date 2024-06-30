@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ProductResource\Pages;
-use App\Models\Product;
+use App\Filament\Resources\CrmStateResource\Pages;
+use App\Models\CrmState;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -15,18 +15,19 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class ProductResource extends Resource
+class CrmStateResource extends Resource
 {
-    protected static ?string $model = Product::class;
+    protected static ?string $model = CrmState::class;
 
-    protected static ?string $slug = 'products';
+    protected static ?string $slug = 'crm-states';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?int $navigationSort = 9;
-    protected static ?string $label = 'Producto';
-    protected static ?string $pluralLabel = 'Productos';
-    // protected static ?string $navigationGroup = 'Gestión';
+    protected static ?int $navigationSort = 12;
+    protected static ?string $label = 'Estado';
+    protected static ?string $pluralLabel = 'Estados';
+    protected static ?string $navigationGroup = 'Gestión';
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function form(Form $form): Form
     {
@@ -35,18 +36,13 @@ class ProductResource extends Resource
                 TextInput::make('name')
                     ->required(),
 
-                TextInput::make('price')
-                    ->prefix('$')
-                    ->suffix('COP')
-                    ->numeric(),
+                Placeholder::make('created_at')
+                    ->label('Created Date')
+                    ->content(fn(?CrmState $record): string => $record?->created_at?->diffForHumans() ?? '-'),
 
-                // Placeholder::make('created_at')
-                //     ->label('Created Date')
-                //     ->content(fn(?Product $record): string => $record?->created_at?->diffForHumans() ?? '-'),
-                //
-                // Placeholder::make('updated_at')
-                //     ->label('Last Modified Date')
-                //     ->content(fn(?Product $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
+                Placeholder::make('updated_at')
+                    ->label('Last Modified Date')
+                    ->content(fn(?CrmState $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
             ]);
     }
 
@@ -55,13 +51,7 @@ class ProductResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->label('Nombre')
                     ->searchable()
-                    ->sortable(),
-
-                TextColumn::make('price')
-                    ->label('Precio')
-                    ->money('cop')
                     ->sortable(),
             ])
             ->filters([
@@ -81,9 +71,9 @@ class ProductResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListProducts::route('/'),
-            'create' => Pages\CreateProduct::route('/create'),
-            'edit' => Pages\EditProduct::route('/{record}/edit'),
+            'index' => Pages\ListCrmStates::route('/'),
+            'create' => Pages\CreateCrmState::route('/create'),
+            'edit' => Pages\EditCrmState::route('/{record}/edit'),
         ];
     }
 

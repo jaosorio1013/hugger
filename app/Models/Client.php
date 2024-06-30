@@ -8,10 +8,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Nnjeim\World\Models\City;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Client extends Model
 {
     use SoftDeletes, HasFactory;
+
+    use LogsActivity;
 
     public const TYPE_NATURAL = 1;
     public const TYPE_COMPANY = 2;
@@ -79,4 +83,9 @@ class Client extends Model
     // {
     //     return $this->belongsToMany(Tag::class);
     // }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->dontSubmitEmptyLogs();
+    }
 }

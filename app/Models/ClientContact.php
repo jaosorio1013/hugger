@@ -6,10 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class ClientContact extends Model
 {
     use SoftDeletes, HasFactory;
+
+    use LogsActivity;
 
     protected $fillable = [
         'name',
@@ -34,5 +38,10 @@ class ClientContact extends Model
     public function mean(): BelongsTo
     {
         return $this->belongsTo(CrmMean::class);
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->dontSubmitEmptyLogs();
     }
 }

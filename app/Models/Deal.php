@@ -7,10 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Deal extends Model
 {
     use SoftDeletes, HasFactory;
+
+    use LogsActivity;
 
     protected $fillable = [
         'code',
@@ -51,5 +55,10 @@ class Deal extends Model
     public function details(): HasMany
     {
         return $this->hasMany(DealDetail::class);
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->dontSubmitEmptyLogs();
     }
 }

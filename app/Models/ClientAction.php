@@ -6,10 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class ClientAction extends Model
 {
     use SoftDeletes, HasFactory;
+
+    use LogsActivity;
 
     protected $fillable = [
         'client_id',
@@ -31,5 +35,10 @@ class ClientAction extends Model
     public function state(): BelongsTo
     {
         return $this->belongsTo(CrmState::class);
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->dontSubmitEmptyLogs();
     }
 }

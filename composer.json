@@ -9,6 +9,7 @@
         "filament/filament": "^3.2",
         "laravel/framework": "^11.0",
         "laravel/tinker": "^2.9",
+        "mailchimp/marketing": "^3.0",
         "nnjeim/world": "^1.1",
         "rmsramos/activitylog": "^1.0"
     },

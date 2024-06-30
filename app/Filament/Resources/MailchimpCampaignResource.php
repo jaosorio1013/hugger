@@ -3,7 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\MailchimpCampaignResource\Pages;
-use App\Models\MailchimpCampaigns;
+use App\Models\MailchimpCampaign;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -11,7 +11,6 @@ use Filament\Resources\Resource;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ForceDeleteAction;
 use Filament\Tables\Actions\ForceDeleteBulkAction;
 use Filament\Tables\Actions\RestoreAction;
@@ -24,7 +23,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class MailchimpCampaignResource extends Resource
 {
-    protected static ?string $model = MailchimpCampaigns::class;
+    protected static ?string $model = MailchimpCampaign::class;
 
     protected static ?string $slug = 'mailchimp-campaigns';
 
@@ -50,11 +49,11 @@ class MailchimpCampaignResource extends Resource
 
                 Placeholder::make('created_at')
                     ->label('Created Date')
-                    ->content(fn(?MailchimpCampaigns $record): string => $record?->created_at?->diffForHumans() ?? '-'),
+                    ->content(fn(?MailchimpCampaign $record): string => $record?->created_at?->diffForHumans() ?? '-'),
 
                 Placeholder::make('updated_at')
                     ->label('Last Modified Date')
-                    ->content(fn(?MailchimpCampaigns $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
+                    ->content(fn(?MailchimpCampaign $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
             ]);
     }
 
@@ -75,7 +74,7 @@ class MailchimpCampaignResource extends Resource
             ])
             ->actions([
                 // EditAction::make()->label(''),
-                DeleteAction::make()->label(''),
+                // DeleteAction::make()->label(''),
                 RestoreAction::make(),
                 ForceDeleteAction::make(),
             ])
@@ -109,4 +108,6 @@ class MailchimpCampaignResource extends Resource
     {
         return ['name'];
     }
+
+
 }

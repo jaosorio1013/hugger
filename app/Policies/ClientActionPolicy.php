@@ -12,30 +12,36 @@ class ClientActionPolicy
 
     public function viewAny(User $user): bool
     {
-
+        return true;
     }
 
     public function view(User $user, ClientAction $clientAction): bool
     {
+        return true;
     }
 
     public function create(User $user): bool
     {
+        return true;
     }
 
     public function update(User $user, ClientAction $clientAction): bool
     {
+        return true;
     }
 
     public function delete(User $user, ClientAction $clientAction): bool
     {
+        return true;
     }
 
     public function restore(User $user, ClientAction $clientAction): bool
     {
+        return true;
     }
 
     public function forceDelete(User $user, ClientAction $clientAction): bool
     {
+        return true;
     }
 }

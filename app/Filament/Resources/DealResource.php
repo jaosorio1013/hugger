@@ -31,7 +31,7 @@ class DealResource extends Resource
 
     protected static ?string $slug = 'deals';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
     protected static ?int $navigationSort = 3;
     protected static ?string $label = 'Compra';

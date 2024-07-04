@@ -31,7 +31,7 @@ class ClientResource extends Resource
 
     protected static ?string $slug = 'clients';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-building-office';
 
     protected static ?int $navigationSort = 2;
     protected static ?string $label = 'Cliente';
@@ -41,6 +41,18 @@ class ClientResource extends Resource
     {
         return $form
             ->schema([
+                // Tipo empresa
+                // Nombre
+                    // Encargado
+                // Datos
+                    // Location
+                    // Phone
+                    // Id
+                    // Email
+                // Contact
+                    // Fuente
+                    // Medio de contacto
+
                 TextInput::make('name')
                     ->required(),
 
@@ -58,22 +70,29 @@ class ClientResource extends Resource
                     ->relationship('user', 'name')
                     ->searchable(),
 
-                TextInput::make('crm_font_id')
-                    ->integer(),
+                Select::make('crm_font_id')
+                    ->relationship('font', 'name'),
 
-                TextInput::make('crm_mean_id')
-                    ->integer(),
+                Select::make('crm_mean_id')
+                    ->relationship('mean', 'name'),
 
-                TextInput::make('location_city_id')
-                    ->integer(),
+                Select::make('location_city_id')
+                    ->relationship('city', 'name')
+                    ->searchable(),
 
-                Placeholder::make('created_at')
-                    ->label('Created Date')
-                    ->content(fn(?Client $record): string => $record?->created_at?->diffForHumans() ?? '-'),
+                // Placeholder::make('created_at')
+                //     ->label('Created Date')
+                //     ->content(fn(?Client $record): string => $record?->created_at?->diffForHumans() ?? '-'),
+                //
+                // Placeholder::make('updated_at')
+                //     ->label('Last Modified Date')
+                //     ->content(fn(?Client $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
 
-                Placeholder::make('updated_at')
-                    ->label('Last Modified Date')
-                    ->content(fn(?Client $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
+
+                // Nombre
+                // Telefono
+                // Cargo
+                // Email
             ]);
     }
 
@@ -85,23 +104,21 @@ class ClientResource extends Resource
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('nit'),
-
-                TextColumn::make('phone'),
-
-                TextColumn::make('address'),
+                // TextColumn::make('nit'),
+                // TextColumn::make('phone'),
+                // TextColumn::make('email'),
+                // TextColumn::make('address'),
 
                 TextColumn::make('type'),
 
-                TextColumn::make('user.name')
-                    ->searchable()
-                    ->sortable(),
+                // TextColumn::make('user.name')
+                //     ->searchable()
+                //     ->sortable(),
 
-                TextColumn::make('crm_font_id'),
+                TextColumn::make('font.name'), // Contacto
 
-                TextColumn::make('crm_mean_id'),
-
-                TextColumn::make('location_city_id'),
+                // TextColumn::make('crm_mean_id'),
+                // TextColumn::make('location_city_id'),
             ])
             ->filters([
                 TrashedFilter::make(),

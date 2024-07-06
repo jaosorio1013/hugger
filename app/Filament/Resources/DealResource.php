@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\DealResource\Pages;
 use App\Models\Deal;
 use App\Models\Product;
+use App\Tables\Columns\TableRepeatableColumn;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
 use Filament\Forms\Components\Actions\Action;
@@ -29,6 +30,9 @@ use Filament\Tables\Actions\ForceDeleteBulkAction;
 use Filament\Tables\Actions\RestoreAction;
 use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\Layout\Panel;
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
@@ -93,7 +97,7 @@ class DealResource extends Resource
                             ->modalDescription('Todos los artículos existentes se eliminarán del pedido.')
                             ->requiresConfirmation()
                             ->color('danger')
-                            ->action(fn (Set $set) => $set('details', [])),
+                            ->action(fn(Set $set) => $set('details', [])),
                     ])
                     ->schema([
                         static::getDealProducts()
@@ -144,8 +148,7 @@ class DealResource extends Resource
 
                 TextInput::make('quantity')
                     ->afterStateUpdated(
-                        fn(Get $get, $livewire, Set $set) =>
-                        $set('total', $get('price') * $get('quantity'))
+                        fn(Get $get, $livewire, Set $set) => $set('total', $get('price') * $get('quantity'))
                     )
                     ->numeric()
                     ->minValue(1)
@@ -161,8 +164,7 @@ class DealResource extends Resource
                     ->prefix('$')
                     ->suffix('COP')
                     ->afterStateUpdated(
-                        fn(Get $get, $livewire, Set $set) =>
-                        $set('total', $get('price') * $get('quantity'))
+                        fn(Get $get, $livewire, Set $set) => $set('total', $get('price') * $get('quantity'))
                     )
                     ->minValue(0)
                     ->required()
@@ -171,8 +173,7 @@ class DealResource extends Resource
 
                 TextInput::make('total')
                     ->afterStateUpdated(
-                        fn(Get $get, $livewire, Set $set) =>
-                        $set('.total', 123)
+                        fn(Get $get, $livewire, Set $set) => $set('.total', 123)
                     )
                     ->prefix('$')
                     ->suffix('COP')
@@ -186,7 +187,7 @@ class DealResource extends Resource
                 self::updateTotals($get, $livewire);
             })
             ->deleteAction(
-                fn (Action $action) => $action->after(fn (Get $get, $livewire) => self::updateTotals($get, $livewire)),
+                fn(Action $action) => $action->after(fn(Get $get, $livewire) => self::updateTotals($get, $livewire)),
             )
             // ->reorderable(true)
             ->required();
@@ -202,7 +203,7 @@ class DealResource extends Resource
             return;
         }
 
-        $selectedProducts = collect($products)->filter(fn ($item) => !empty($item['product_id']) && !empty($item['quantity']));
+        $selectedProducts = collect($products)->filter(fn($item) => !empty($item['product_id']) && !empty($item['quantity']));
 
         $prices = collect($products)->pluck('price', 'product_id');
 
@@ -217,32 +218,58 @@ class DealResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('date')
-                    ->label('Fecha Compra')
-                    ->date(),
+                Split::make([
+                    TextColumn::make('date')
+                        ->label('Fecha Compra')
+                        ->date(),
 
-                TextColumn::make('code')
-                    ->label('Factura'),
+                    TextColumn::make('code')
+                        ->label('Factura'),
 
-                TextColumn::make('client.name')
-                    ->label('Cliente')
-                    ->searchable()
-                    ->sortable(),
+                    TextColumn::make('client.name')
+                        ->label('Cliente')
+                        ->searchable()
+                        ->sortable(),
 
-                TextColumn::make('total')
-                    ->money('cop'),
+                    TextColumn::make('total')
+                        ->money('cop')
+                        ->prefix('$ '),
 
-                // TextColumn::make('products')->counts(''),
-                // TableRepeatableEntry::make('details')
-                //     ->label('Detalle')
-                //     ->schema([
-                //         TextEntry::make('product.name'),
-                //         TextEntry::make('quantity'),
-                //         TextEntry::make('price'),
-                //         TextEntry::make('total'),
-                //     ])
-                //     ->striped()
-                //     ->columnSpan(2),
+                    // TextColumn::make('products')->counts(''),
+                    // TableRepeatableEntry::make('details')
+                    //     ->label('Detalle')
+                    //     ->schema([
+                    //         TextEntry::make('product.name'),
+                    //         TextEntry::make('quantity'),
+                    //         TextEntry::make('price'),
+                    //         TextEntry::make('total'),
+                    //     ])
+                    //     ->striped()
+                    //     ->columnSpan(2),
+                ]),
+
+                Split::make([
+                    // TableRepeatableColumn::make('details')
+                    //     ->label('Detalle')
+                    // ->schema([
+                    //     TextEntry::make('product.name')
+                    //         ->label('Producto'),
+                    //
+                    //     TextEntry::make('quantity')
+                    //         ->label('Cantidad'),
+                    //
+                    //     TextEntry::make('price')
+                    //         ->label('Precio')
+                    //         ->money('cop')
+                    //         ->prefix('$ '),
+                    //
+                    //     TextEntry::make('total')
+                    //         ->money('cop')
+                    //         ->prefix('$ '),
+                    // ])
+                    // ->striped()
+                    // ->columnSpan(2),
+                ])->collapsible(true),
             ])
             ->filters([
                 TrashedFilter::make(),
@@ -316,15 +343,26 @@ class DealResource extends Resource
                     ->label('Cliente'),
 
                 TextEntry::make('total')
-                    ->money('cop'),
+                    ->money('cop')
+                    ->prefix('$ '),
 
                 TableRepeatableEntry::make('details')
                     ->label('Detalle')
                     ->schema([
-                        TextEntry::make('product.name'),
-                        TextEntry::make('quantity'),
-                        TextEntry::make('price'),
-                        TextEntry::make('total'),
+                        TextEntry::make('product.name')
+                            ->label('Producto'),
+
+                        TextEntry::make('quantity')
+                            ->label('Cantidad'),
+
+                        TextEntry::make('price')
+                            ->label('Precio')
+                            ->money('cop')
+                            ->prefix('$ '),
+
+                        TextEntry::make('total')
+                            ->money('cop')
+                            ->prefix('$ '),
                     ])
                     ->striped()
                     ->columnSpan(2),

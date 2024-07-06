@@ -57,6 +57,11 @@ class Deal extends Model
         return $this->hasMany(DealDetail::class);
     }
 
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'deal_details', 'deal_id', 'product_id');
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()

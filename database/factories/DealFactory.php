@@ -5,12 +5,22 @@ namespace Database\Factories;
 use App\Models\Client;
 use App\Models\ClientContact;
 use App\Models\Deal;
+use App\Models\DealDetail;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
 class DealFactory extends Factory
 {
     protected $model = Deal::class;
+
+    public function configure(): DealFactory
+    {
+        return $this->afterCreating(function (Deal $deal) {
+            DealDetail::factory(random_int(1, 5))->create([
+                'deal_id' => $deal->id,
+            ]);
+        });
+    }
 
     public function definition(): array
     {

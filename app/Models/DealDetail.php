@@ -20,7 +20,7 @@ class DealDetail extends Model
         'client_id',
         'product_id',
         'quantity',
-        'price_per_unit',
+        'price',
         'total',
     ];
 
@@ -30,7 +30,7 @@ class DealDetail extends Model
 
         self::creating(function (DealDetail $dealDetail) {
             $dealDetail->client_id = $dealDetail->deal->client_id;
-            $dealDetail->total = $dealDetail->price_per_unit * $dealDetail->quantity;
+            $dealDetail->total = $dealDetail->price * $dealDetail->quantity;
         });
 
         self::saved(function (DealDetail $dealDetail) {

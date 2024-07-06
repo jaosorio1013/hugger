@@ -13,7 +13,7 @@ class DealDetailRequest extends FormRequest
             'client_id' => ['required', 'exists:clients'],
             'product_id' => ['required', 'exists:products'],
             'quantity' => ['required', 'integer'],
-            'price_per_unit' => ['required', 'numeric'],
+            'price' => ['required', 'numeric'],
             'total' => ['required', 'numeric'],
         ];
     }

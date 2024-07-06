@@ -5,7 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\DealResource\Pages;
 use App\Models\Deal;
 use App\Models\Product;
-use App\Tables\Columns\TableRepeatableColumn;
+use App\Tables\Columns\DealDetailsColumn;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
 use Filament\Forms\Components\Actions\Action;
@@ -64,11 +64,6 @@ class DealResource extends Resource
                     DatePicker::make('date')
                         ->label('Fecha Compra'),
 
-                    // TextInput::make('total')
-                    //     ->prefix('$')
-                    //     ->suffix('COP')
-                    //     ->numeric(),
-
                     Select::make('client_id')
                         ->label('Cliente')
                         ->relationship('client', 'name')
@@ -80,24 +75,16 @@ class DealResource extends Resource
                         ->relationship('contact', 'name')
                         ->searchable()
                         ->required(),
-
-                    // Placeholder::make('created_at')
-                    //     ->label('Created Date')
-                    //     ->content(fn(?Deal $record): string => $record?->created_at?->diffForHumans() ?? '-'),
-                    //
-                    // Placeholder::make('updated_at')
-                    //     ->label('Last Modified Date')
-                    //     ->content(fn(?Deal $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
                 ]),
 
                 Section::make('Detalle')
                     ->headerActions([
-                        Action::make('Borrar')
+                        Action::make('Eliminar Productos de la Compra')
                             // ->modalHeading('Estas seguro?')
                             ->modalDescription('Todos los artículos existentes se eliminarán del pedido.')
                             ->requiresConfirmation()
                             ->color('danger')
-                            ->action(fn(Set $set) => $set('details', [])),
+                            ->action(fn (Set $set) => $set('details', [])),
                     ])
                     ->schema([
                         static::getDealProducts()
@@ -148,7 +135,7 @@ class DealResource extends Resource
 
                 TextInput::make('quantity')
                     ->afterStateUpdated(
-                        fn(Get $get, $livewire, Set $set) => $set('total', $get('price') * $get('quantity'))
+                        fn (Get $get, $livewire, Set $set) => $set('total', $get('price') * $get('quantity'))
                     )
                     ->numeric()
                     ->minValue(1)
@@ -164,7 +151,7 @@ class DealResource extends Resource
                     ->prefix('$')
                     ->suffix('COP')
                     ->afterStateUpdated(
-                        fn(Get $get, $livewire, Set $set) => $set('total', $get('price') * $get('quantity'))
+                        fn (Get $get, $livewire, Set $set) => $set('total', $get('price') * $get('quantity'))
                     )
                     ->minValue(0)
                     ->required()
@@ -173,7 +160,7 @@ class DealResource extends Resource
 
                 TextInput::make('total')
                     ->afterStateUpdated(
-                        fn(Get $get, $livewire, Set $set) => $set('.total', 123)
+                        fn (Get $get, $livewire, Set $set) => $set('.total', 123)
                     )
                     ->prefix('$')
                     ->suffix('COP')
@@ -187,7 +174,7 @@ class DealResource extends Resource
                 self::updateTotals($get, $livewire);
             })
             ->deleteAction(
-                fn(Action $action) => $action->after(fn(Get $get, $livewire) => self::updateTotals($get, $livewire)),
+                fn (Action $action) => $action->after(fn (Get $get, $livewire) => self::updateTotals($get, $livewire)),
             )
             // ->reorderable(true)
             ->required();
@@ -203,7 +190,7 @@ class DealResource extends Resource
             return;
         }
 
-        $selectedProducts = collect($products)->filter(fn($item) => !empty($item['product_id']) && !empty($item['quantity']));
+        $selectedProducts = collect($products)->filter(fn ($item) => !empty($item['product_id']) && !empty($item['quantity']));
 
         $prices = collect($products)->pluck('price', 'product_id');
 
@@ -234,46 +221,17 @@ class DealResource extends Resource
                     TextColumn::make('total')
                         ->money('cop')
                         ->prefix('$ '),
-
-                    // TextColumn::make('products')->counts(''),
-                    // TableRepeatableEntry::make('details')
-                    //     ->label('Detalle')
-                    //     ->schema([
-                    //         TextEntry::make('product.name'),
-                    //         TextEntry::make('quantity'),
-                    //         TextEntry::make('price'),
-                    //         TextEntry::make('total'),
-                    //     ])
-                    //     ->striped()
-                    //     ->columnSpan(2),
                 ]),
 
-                Split::make([
-                    // TableRepeatableColumn::make('details')
-                    //     ->label('Detalle')
-                    // ->schema([
-                    //     TextEntry::make('product.name')
-                    //         ->label('Producto'),
-                    //
-                    //     TextEntry::make('quantity')
-                    //         ->label('Cantidad'),
-                    //
-                    //     TextEntry::make('price')
-                    //         ->label('Precio')
-                    //         ->money('cop')
-                    //         ->prefix('$ '),
-                    //
-                    //     TextEntry::make('total')
-                    //         ->money('cop')
-                    //         ->prefix('$ '),
-                    // ])
-                    // ->striped()
-                    // ->columnSpan(2),
+                Panel::make([
+                    DealDetailsColumn::make('details')
                 ])->collapsible(true),
             ])
             ->filters([
                 TrashedFilter::make(),
             ])
+            ->recordUrl(null)
+            ->recordAction(ViewAction::class)
             ->actions([
                 ViewAction::make()->label(' '),
                 EditAction::make()->label(''),

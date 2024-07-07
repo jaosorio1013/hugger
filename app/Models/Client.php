@@ -39,6 +39,10 @@ class Client extends Model
         'crm_mean_id',
     ];
 
+    protected $with = [
+        'contacts'
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -46,7 +50,7 @@ class Client extends Model
 
     public function font(): BelongsTo
     {
-        return $this->belongsTo(CrmFont::class);
+        return $this->belongsTo(CrmFont::class, 'crm_font_id');
     }
 
     public function mean(): BelongsTo

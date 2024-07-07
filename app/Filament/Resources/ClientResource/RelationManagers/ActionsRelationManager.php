@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ClientResource\RelationManagers;
 
+use App\Filament\Resources\DealResource;
 use App\Models\Client;
 use App\Models\ClientContact;
 use Filament\Forms\Components\Placeholder;
@@ -21,15 +22,14 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ContactsRelationManager extends RelationManager
+class ActionsRelationManager extends RelationManager
 {
-    protected static string $relationship = 'contacts';
+    protected static string $relationship = 'actions';
 
-    protected static ?string $title = 'Contactos';
-    protected static ?string $icon = 'heroicon-s-users';
+    protected static ?string $title = 'Acciones';
+    protected static ?string $icon = 'heroicon-o-play';
 
     public function form(Form $form): Form
     {
@@ -103,10 +103,5 @@ class ContactsRelationManager extends RelationManager
             ->modifyQueryUsing(fn(Builder $query) => $query->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]));
-    }
-
-    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
-    {
-        return $ownerRecord->type !== Client::TYPE_NATURAL;
     }
 }

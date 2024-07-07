@@ -106,14 +106,16 @@ class DealResource extends Resource
 
     public static function getDealProducts()
     {
-        return TableRepeater::make('details')
+        // Repeater::
+
+        return Repeater::make('details')
             ->relationship()
-            ->headers([
-                Header::make('Producto'),
-                Header::make('Cantidad'),
-                Header::make('Precio Unitario'),
-                Header::make('Total'),
-            ])
+            // ->headers([
+            //     Header::make('Producto'),
+            //     Header::make('Cantidad'),
+            //     Header::make('Precio Unitario'),
+            //     Header::make('Total'),
+            // ])
             ->schema([
                 Select::make('product_id')
                     ->label('Producto')
@@ -204,37 +206,15 @@ class DealResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
-                Split::make([
-                    TextColumn::make('date')
-                        ->label('Fecha Compra')
-                        ->date(),
-
-                    TextColumn::make('code')
-                        ->label('Factura'),
-
-                    TextColumn::make('client.name')
-                        ->label('Cliente')
-                        ->searchable()
-                        ->sortable(),
-
-                    TextColumn::make('total')
-                        ->money('cop')
-                        ->prefix('$ '),
-                ]),
-
-                Panel::make([
-                    DealDetailsColumn::make('details')
-                ])->collapsible(true),
-            ])
+            ->columns(static::getTableColumns())
             ->filters([
                 TrashedFilter::make(),
             ])
-            ->recordUrl(null)
-            ->recordAction(ViewAction::class)
+            // ->recordUrl(null)
+            // ->recordAction(ViewAction::class)
             ->actions([
-                ViewAction::make()->label(' '),
-                EditAction::make()->label(''),
+                // ViewAction::make()->label(' '),
+                EditAction::make()->label('')->modalWidth(900),
                 DeleteAction::make()->label(''),
                 RestoreAction::make(),
                 ForceDeleteAction::make(),
@@ -246,6 +226,33 @@ class DealResource extends Resource
                     ForceDeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    public static function getTableColumns(): array
+    {
+        return [
+            Split::make([
+                TextColumn::make('date')
+                    ->label('Fecha Compra')
+                    ->date(),
+
+                TextColumn::make('code')
+                    ->label('Factura'),
+
+                TextColumn::make('client.name')
+                    ->label('Cliente')
+                    ->searchable()
+                    ->sortable(),
+
+                TextColumn::make('total')
+                    ->money('cop')
+                    ->prefix('$ '),
+            ]),
+
+            Panel::make([
+                DealDetailsColumn::make('details')
+            ])->collapsible(true),
+        ];
     }
 
     public static function getPages(): array

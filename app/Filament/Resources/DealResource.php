@@ -207,9 +207,9 @@ class DealResource extends Resource
     {
         return $table
             ->columns(static::getTableColumns())
-            ->filters([
-                TrashedFilter::make(),
-            ])
+            // ->filters([
+            //     TrashedFilter::make(),
+            // ])
             // ->recordUrl(null)
             // ->recordAction(ViewAction::class)
             ->actions([
@@ -234,6 +234,7 @@ class DealResource extends Resource
             Split::make([
                 TextColumn::make('date')
                     ->label('Fecha Compra')
+                    ->sortable()
                     ->date(),
 
                 TextColumn::make('code')
@@ -241,7 +242,7 @@ class DealResource extends Resource
 
                 TextColumn::make('client.name')
                     ->label('Cliente')
-                    ->searchable()
+                    // ->searchable()
                     ->sortable(),
 
                 TextColumn::make('total')

@@ -29,12 +29,12 @@ class ClientAction extends Model
 
     public function action(): BelongsTo
     {
-        return $this->belongsTo(CrmAction::class);
+        return $this->belongsTo(CrmAction::class, 'crm_action_id');
     }
 
     public function state(): BelongsTo
     {
-        return $this->belongsTo(CrmState::class);
+        return $this->belongsTo(CrmState::class, 'crm_state_id');
     }
 
     public function getActivitylogOptions(): LogOptions

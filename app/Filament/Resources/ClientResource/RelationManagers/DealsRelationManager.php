@@ -3,26 +3,10 @@
 namespace App\Filament\Resources\ClientResource\RelationManagers;
 
 use App\Filament\Resources\DealResource;
-use App\Models\Client;
-use App\Models\ClientContact;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ForceDeleteAction;
-use Filament\Tables\Actions\ForceDeleteBulkAction;
-use Filament\Tables\Actions\RestoreAction;
-use Filament\Tables\Actions\RestoreBulkAction;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class DealsRelationManager extends RelationManager
 {
@@ -30,6 +14,8 @@ class DealsRelationManager extends RelationManager
 
     protected static ?string $title = 'Compras';
     protected static ?string $icon = 'heroicon-o-shopping-cart';
+
+    protected ?string $placeholderHeight = 'full';
 
     public function form(Form $form): Form
     {
@@ -40,9 +26,11 @@ class DealsRelationManager extends RelationManager
     {
         return DealResource::table($table)
             ->headerActions([
-                CreateAction::make()->modalWidth(900),
+                CreateAction::make()
+                    ->modalHeading('Crear compra')
+                    ->label('Crear compra')
+                    ->modalWidth(900),
             ]);
-
 
 
         // return $table

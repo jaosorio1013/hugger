@@ -3,7 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ClientResource\Pages;
-use App\Filament\Resources\ClientResource\RelationManagers\ActionsRelationManager;
+use App\Filament\Resources\ClientResource\RelationManagers\ClientActionsRelationManager;
 use App\Filament\Resources\ClientResource\RelationManagers\ContactsRelationManager;
 use App\Filament\Resources\ClientResource\RelationManagers\DealsRelationManager;
 use App\Models\Client;
@@ -72,6 +72,7 @@ class ClientResource extends Resource
                 ->required(),
 
             TextInput::make('name')
+                ->label('Nombre')
                 ->required(),
 
             TextInput::make('nit')
@@ -84,175 +85,22 @@ class ClientResource extends Resource
                 ->label('Dirección'),
 
             Select::make('user_id')
+                ->label('Responsable')
                 ->relationship('user', 'name')
                 ->searchable(),
 
             Select::make('crm_font_id')
+                ->label('Fuente de contacto')
                 ->relationship('font', 'name'),
 
             Select::make('crm_mean_id')
+                ->label('Medio de contacto')
                 ->relationship('mean', 'name'),
 
             Select::make('location_city_id')
+                ->label('Ciudad')
                 ->relationship('city', 'name')
                 ->searchable(),
-        ];
-    }
-
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->actions(static::getTableActions())
-            ->columns(static::getTableColumns())
-            ->filters(static::getTableFilter(), layout: FiltersLayout::AboveContent)
-            // ->filters(static::getTableFilter(), layout: FiltersLayout::AboveContentCollapsible)
-            ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                    RestoreBulkAction::make(),
-                    ForceDeleteBulkAction::make(),
-                ]),
-            ]);
-    }
-
-    public static function getTableColumns(): array
-    {
-        return [
-            IconColumn::make('type')
-                ->label('Tipo')
-                ->icon(fn($state): string => match ($state) {
-                    Client::TYPE_COMPANY => 'heroicon-o-building-office',
-                    Client::TYPE_ALLIED => 'heroicon-o-hand-thumb-up',
-                    Client::TYPE_NATURAL => 'heroicon-o-user',
-                })
-                ->sortable()
-                ->width(50),
-
-            TextColumn::make('name')
-                ->label('Nombre')
-                ->description(fn(Client $client): HtmlString => new HtmlString(
-                    $client->user?->name ?? '<i style="color: #fc8d8d; ">Sin responsable</i>'
-                ))
-                ->sortable(),
-
-            TextColumn::make('nit')
-                ->label('Datos')
-                ->formatStateUsing(fn(Client $client): View => view(
-                    'tables.columns.client-general-data',
-                    ['client' => $client]
-                )),
-
-            TextColumn::make('font.name')
-                ->icon('heroicon-o-arrow-left-end-on-rectangle')
-                ->label('Contacto')
-                ->columnSpan(2),
-        ];
-    }
-
-    public static function getTableFilter(): array
-    {
-        return [
-            static::getCompanyDataFilter(),
-            static::getDealsDataFilter(),
-            static::getProductsDataFilter(),
-            static::getActionsFilter(),
-        ];
-    }
-
-    private static function getCompanyDataFilter()
-    {
-        $clientTypes = [
-            Client::TYPE_NATURAL => 'Persona Natural',
-            Client::TYPE_COMPANY => 'Empresa',
-            Client::TYPE_ALLIED => 'Aliado',
-        ];
-        
-        return Filter::make('Datos Cliente')
-            ->form([
-                TextInput::make('name')
-                    ->label('Nombre'),
-
-                Select::make('type')
-                    ->label('Tipo Empresa')
-                    ->multiple()
-                    ->options($clientTypes),
-            ])
-            ->query(function (Builder $query, array $data): Builder {
-                return $query
-                    ->when(
-                        $data['name'] ?? null,
-                        fn(Builder $query) => $query->where('name', 'like', '%' . $data['name'] . '%'),
-                    )
-                    ->when(
-                        $data['type'] ?? null,
-                        fn(Builder $query) => $query->whereIn('type', $data['type']),
-                    );
-            })
-            ->indicateUsing(function (array $data) use ($clientTypes): array {
-                $indicators = [];
-                if ($data['name'] ?? null) {
-                    $indicators['name'] = 'Nombre contiene: "' . $data['name'] . '"';
-                }
-                if ($data['type'] ?? null) {
-                    $labels = collect($clientTypes)
-                        ->mapWithKeys(fn (string | array $label, string $value): array => is_array($label) ? $label : [$value => $label])
-                        ->only($data['type'])
-                        ->all();
-
-                    $indicators['type'] = 'Tipo empresa es: ' . collect($labels)->join(', ', ' o ');;
-                }
-
-                return $indicators;
-            });
-    }
-
-    private static function getDealsDataFilter()
-    {
-        return Filter::make('Datos Compra')
-            ->form([]);
-    }
-
-    private static function getProductsDataFilter()
-    {
-        return Filter::make('Datos Producto')
-            ->form([]);
-    }
-
-    private static function getActionsFilter()
-    {
-        return Filter::make('Acciones')
-            ->form([]);
-    }
-
-    public static function getTableActions(): array
-    {
-        return [
-            Action::make('Contactos')
-                ->hidden(fn($record) => $record->contacts->isEmpty())
-                ->icon('heroicon-o-users')
-                ->color('info')
-                ->label('')
-                ->infolist([
-                    TableRepeatableEntry::make('contacts')
-                        ->label('Contactos')
-                        ->schema([
-                            TextEntry::make('name')
-                                ->label('Nombre'),
-
-                            TextEntry::make('phone')
-                                ->label('Teléfono'),
-
-                            TextEntry::make('email'),
-
-                            TextEntry::make('charge')
-                                ->label('Cargo'),
-                        ])
-                        ->striped(),
-                ]),
-            EditAction::make()->label(''),
-            // DeleteAction::make()->label(''),
-            RestoreAction::make(),
-            ForceDeleteAction::make(),
         ];
     }
 
@@ -260,7 +108,7 @@ class ClientResource extends Resource
     {
         return [
             ContactsRelationManager::class,
-            ActionsRelationManager::class,
+            ClientActionsRelationManager::class,
             DealsRelationManager::class,
         ];
     }
@@ -280,34 +128,5 @@ class ClientResource extends Resource
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
-    }
-
-    public static function getGlobalSearchEloquentQuery(): Builder
-    {
-        return parent::getGlobalSearchEloquentQuery()->with(['font', 'mean', 'user']);
-    }
-
-    public static function getGloballySearchableAttributes(): array
-    {
-        return ['name', 'font.name', 'mean.name', 'user.name'];
-    }
-
-    public static function getGlobalSearchResultDetails(Model $record): array
-    {
-        $details = [];
-
-        if ($record->font) {
-            $details['Font'] = $record->font->name;
-        }
-
-        if ($record->mean) {
-            $details['Mean'] = $record->mean->name;
-        }
-
-        if ($record->user) {
-            $details['User'] = $record->user->name;
-        }
-
-        return $details;
     }
 }

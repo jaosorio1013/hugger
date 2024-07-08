@@ -32,12 +32,12 @@ class ClientContact extends Model
 
     public function font(): BelongsTo
     {
-        return $this->belongsTo(CrmFont::class);
+        return $this->belongsTo(CrmFont::class, 'crm_font_id');
     }
 
     public function mean(): BelongsTo
     {
-        return $this->belongsTo(CrmMean::class);
+        return $this->belongsTo(CrmMean::class, 'crm_mean_id');
     }
 
     public function getActivitylogOptions(): LogOptions

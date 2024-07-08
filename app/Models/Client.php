@@ -55,7 +55,7 @@ class Client extends Model
 
     public function mean(): BelongsTo
     {
-        return $this->belongsTo(CrmMean::class);
+        return $this->belongsTo(CrmMean::class, 'crm_mean_id');
     }
 
     public function city(): BelongsTo

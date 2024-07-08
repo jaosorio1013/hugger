@@ -5,6 +5,7 @@ namespace App\Filament\Resources\ClientResource\RelationManagers;
 use App\Models\Client;
 use App\Models\ClientContact;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -36,27 +37,24 @@ class ContactsRelationManager extends RelationManager
         return $form
             ->schema([
                 TextInput::make('name')
+                    ->label('Nombre')
                     ->required(),
 
                 TextInput::make('email'),
 
-                TextInput::make('charge'),
+                TextInput::make('charge')
+                    ->label('Cargo'),
 
-                TextInput::make('phone'),
+                TextInput::make('phone')
+                    ->label('Teléfono'),
 
-                TextInput::make('crm_font_id')
-                    ->integer(),
+                Select::make('crm_font_id')
+                    ->label('Fuente de contacto')
+                    ->relationship('font', 'name'),
 
-                TextInput::make('crm_mean_id')
-                    ->integer(),
-
-                Placeholder::make('created_at')
-                    ->label('Created Date')
-                    ->content(fn(?ClientContact $record): string => $record?->created_at?->diffForHumans() ?? '-'),
-
-                Placeholder::make('updated_at')
-                    ->label('Last Modified Date')
-                    ->content(fn(?ClientContact $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
+                Select::make('crm_mean_id')
+                    ->label('Medio de contacto')
+                    ->relationship('mean', 'name'),
             ]);
     }
 
@@ -66,26 +64,32 @@ class ContactsRelationManager extends RelationManager
             ->recordTitleAttribute('name')
             ->columns([
                 TextColumn::make('name')
+                    ->label('Nombre')
                     ->searchable()
                     ->sortable(),
 
                 TextColumn::make('email')
-                    ->searchable()
                     ->sortable(),
 
-                TextColumn::make('charge'),
+                TextColumn::make('charge')
+                    ->label('Cargo'),
 
-                TextColumn::make('phone'),
+                TextColumn::make('phone')
+                    ->label('Teléfono'),
 
-                TextColumn::make('crm_font_id'),
+                TextColumn::make('font.name')
+                    ->label('Fuente de contacto'),
 
-                TextColumn::make('crm_mean_id'),
+                TextColumn::make('mean.name')
+                    ->label('Medio de contacto'),
             ])
-            ->filters([
-                TrashedFilter::make(),
-            ])
+            // ->filters([
+            //     TrashedFilter::make(),
+            // ])
             ->headerActions([
-                CreateAction::make(),
+                CreateAction::make()
+                    ->modalHeading('Crear Contacto')
+                    ->label('Crear Contacto'),
             ])
             ->actions([
                 EditAction::make(),

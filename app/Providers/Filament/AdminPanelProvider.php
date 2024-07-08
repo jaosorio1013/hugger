@@ -60,6 +60,7 @@ class AdminPanelProvider extends PanelProvider
                     ->navigationGroup('Gestión')
                     ->navigationSort(29),
             ])
+            ->globalSearch(false)
             ->authMiddleware([
                 Authenticate::class,
             ]);

@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ClientResource\Pages;
+use App\Filament\Resources\ClientResource\Pages\CreateClient;
+use App\Filament\Resources\ClientResource\Pages\EditClient;
+use App\Filament\Resources\ClientResource\Pages\ListClients;
 use App\Filament\Resources\ClientResource\RelationManagers\ClientActionsRelationManager;
 use App\Filament\Resources\ClientResource\RelationManagers\ContactsRelationManager;
 use App\Filament\Resources\ClientResource\RelationManagers\DealsRelationManager;
@@ -55,56 +57,7 @@ class ClientResource extends Resource
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema(static::getFormFields());
-    }
-
-    public static function getFormFields(): array
-    {
-        return [
-            Select::make('type')
-                ->options([
-                    Client::TYPE_NATURAL => 'Persona Natural',
-                    Client::TYPE_COMPANY => 'Empresa',
-                    Client::TYPE_ALLIED => 'Aliado',
-                ])
-                ->label('Tipo')
-                ->required(),
-
-            TextInput::make('name')
-                ->label('Nombre')
-                ->required(),
-
-            TextInput::make('nit')
-                ->label('Número Identificación'),
-
-            TextInput::make('phone')
-                ->label('Teléfono'),
-
-            TextInput::make('email')
-                ->label('Email'),
-
-            TextInput::make('address')
-                ->label('Dirección'),
-
-            Select::make('user_id')
-                ->label('Responsable')
-                ->relationship('user', 'name')
-                ->searchable(),
-
-            Select::make('crm_font_id')
-                ->label('Fuente de contacto')
-                ->relationship('font', 'name'),
-
-            Select::make('crm_mean_id')
-                ->label('Medio de contacto')
-                ->relationship('mean', 'name'),
-
-            Select::make('location_city_id')
-                ->label('Ciudad')
-                ->relationship('city', 'name')
-                ->searchable(),
-        ];
+        return $form->schema(CreateClient::getFormFields());
     }
 
     public static function getRelations(): array
@@ -119,9 +72,9 @@ class ClientResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListClients::route('/'),
-            'create' => Pages\CreateClient::route('/create'),
-            'edit' => Pages\EditClient::route('/{record}/edit'),
+            'index' => ListClients::route('/'),
+            'create' => CreateClient::route('/create'),
+            'edit' => EditClient::route('/{record}/edit'),
         ];
     }
 

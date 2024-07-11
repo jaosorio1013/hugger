@@ -10,6 +10,7 @@ use Filament\Actions\CreateAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
@@ -187,7 +188,12 @@ class ListClients extends ListRecords
                 ->modalHeading('Crear Acción')
                 ->form((new ClientActionsRelationManager)->getFormSchema())
                 ->action(function (array $data, Client $client): void {
+                    $client->actions()->create($data);
 
+                    Notification::make()
+                        ->title('Acción creada para: ' . $client->name)
+                        ->info()
+                        ->send();
                 })
                 ->icon('heroicon-o-play')
                 ->color('info')

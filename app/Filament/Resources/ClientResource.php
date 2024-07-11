@@ -81,6 +81,9 @@ class ClientResource extends Resource
             TextInput::make('phone')
                 ->label('Teléfono'),
 
+            TextInput::make('email')
+                ->label('Email'),
+
             TextInput::make('address')
                 ->label('Dirección'),
 

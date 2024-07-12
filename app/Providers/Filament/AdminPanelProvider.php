@@ -61,7 +61,6 @@ class AdminPanelProvider extends PanelProvider
                     ->navigationSort(29),
             ])
             ->globalSearch(false)
-            ->databaseNotifications()
             ->authMiddleware([
                 Authenticate::class,
             ]);

@@ -118,11 +118,7 @@ class ListClients extends ListRecords
 
     private function getCompanyDataFilter()
     {
-        $clientTypes = [
-            Client::TYPE_NATURAL => 'Persona Natural',
-            Client::TYPE_COMPANY => 'Empresa',
-            Client::TYPE_ALLIED => 'Aliado',
-        ];
+        $clientTypes = collect(Client::TYPES);
 
         return Filter::make('Datos Cliente')
             ->form([
@@ -151,7 +147,7 @@ class ListClients extends ListRecords
                     $indicators['name'] = 'Nombre contiene: "' . $data['name'] . '"';
                 }
                 if ($data['type'] ?? null) {
-                    $labels = collect($clientTypes)
+                    $labels = $clientTypes
                         ->mapWithKeys(fn (string | array $label, string $value): array => is_array($label) ? $label : [$value => $label])
                         ->only($data['type'])
                         ->all();

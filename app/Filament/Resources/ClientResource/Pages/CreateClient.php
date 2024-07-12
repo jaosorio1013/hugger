@@ -23,11 +23,7 @@ class CreateClient extends CreateRecord
     {
         return [
             Select::make('type')
-                ->options([
-                    Client::TYPE_NATURAL => 'Persona Natural',
-                    Client::TYPE_COMPANY => 'Empresa',
-                    Client::TYPE_ALLIED => 'Aliado',
-                ])
+                ->options(Client::TYPES)
                 ->label('Tipo')
                 ->required(),
 

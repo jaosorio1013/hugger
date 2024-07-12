@@ -20,12 +20,11 @@ class Client extends Model
     public const TYPE_NATURAL = 1;
     public const TYPE_COMPANY = 2;
     public const TYPE_ALLIED = 3;
-
-    public const STATE_UNDEFINED = 0;
-    public const STATE_CUSTOMER_PROSPECT = 1;
-    public const STATE_POTENTIAL_CUSTOMER = 2;
-    public const STATE_ACTIVE_CUSTOMER = 3;
-    public const STATE_INACTIVE_CUSTOMER = 4;
+    public const TYPES = [
+        self::TYPE_NATURAL => 'Persona Natural',
+        self::TYPE_COMPANY => 'Empresa',
+        self::TYPE_ALLIED => 'Aliado',
+    ];
 
     protected $fillable = [
         'name',
@@ -37,6 +36,7 @@ class Client extends Model
         'user_id',
         'crm_font_id',
         'crm_mean_id',
+        'crm_status_id',
     ];
 
     protected $with = [
@@ -71,6 +71,11 @@ class Client extends Model
     public function actions(): HasMany
     {
         return $this->hasMany(ClientAction::class);
+    }
+
+    public function status(): HasMany
+    {
+        return $this->hasMany(CrmStatus::class, 'crm_status_id');
     }
 
     public function deals(): HasMany

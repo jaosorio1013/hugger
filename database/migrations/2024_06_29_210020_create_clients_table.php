@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->foreignId('crm_font_id')->nullable();
             $table->foreignId('crm_mean_id')->nullable();
             $table->foreignId('location_city_id')->nullable();
+            $table->foreignId('crm_status_id')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

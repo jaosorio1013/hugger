@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ClientResource\Pages;
 
+use App\Filament\Exports\ClientExporter;
 use App\Filament\Resources\ClientResource;
 use App\Filament\Resources\ClientResource\RelationManagers\ClientActionsRelationManager;
 use App\Models\Client;
@@ -31,6 +32,8 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
+use pxlrbt\FilamentExcel\Actions\Pages\ExportAction;
+use pxlrbt\FilamentExcel\Columns\Column;
 
 class ListClients extends ListRecords
 {
@@ -40,6 +43,8 @@ class ListClients extends ListRecords
     {
         return [
             CreateAction::make(),
+
+            ExportAction::make()->exports([ClientExporter::make()]),
         ];
     }
 

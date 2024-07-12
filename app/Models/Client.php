@@ -73,9 +73,9 @@ class Client extends Model
         return $this->hasMany(ClientAction::class);
     }
 
-    public function status(): HasMany
+    public function status(): BelongsTo
     {
-        return $this->hasMany(CrmStatus::class, 'crm_status_id');
+        return $this->belongsTo(CrmStatus::class, 'crm_status_id');
     }
 
     public function deals(): HasMany
@@ -99,5 +99,10 @@ class Client extends Model
             ->useLogName('Cliente')
             ->logFillable()
             ->logOnlyDirty();
+    }
+
+    public function getStatusNameAttribute(): string
+    {
+        return $this?->status->name ?? 'Indefinido';
     }
 }

@@ -67,8 +67,7 @@ class ListClients extends ListRecords
                 $this->getDealsDataFilter(),
                 $this->getProductsBoughtDataFilter(),
                 $this->getActionsFilter(),
-            ], layout: FiltersLayout::AboveContent)
-            // ], layout: FiltersLayout::AboveContentCollapsible)
+            ], layout: FiltersLayout::AboveContentCollapsible)
             ->filtersFormSchema(fn(array $filters): array => [
                 Section::make('Datos Cliente')
                     ->schema([$filters['Datos Cliente']])

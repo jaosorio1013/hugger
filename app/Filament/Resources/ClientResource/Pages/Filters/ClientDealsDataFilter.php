@@ -48,8 +48,14 @@ trait ClientDealsDataFilter
             })
             ->indicateUsing(function (array $data) use ($products): array {
                 $indicators = [];
-                $this->filterIndicatorForMultipleSelection($data, $indicators, $products, 'products_bought', 'Productos Comprados');
-                $this->filterIndicatorForMultipleSelection($data, $indicators, $products, 'products_not_bought', 'Productos NO Comprados');
+
+                if ($data['number_purchases'] ?? null) {
+                    $indicators['number_purchases'] = $data['number_purchases'] . ' o más compras';
+                }
+
+                if ($data['amount_purchases'] ?? null) {
+                    $indicators['amount_purchases'] = '$ ' . number_format($data['amount_purchases'], 0, ',', '.') . ' COP o más en compras';
+                }
 
                 return $indicators;
             });

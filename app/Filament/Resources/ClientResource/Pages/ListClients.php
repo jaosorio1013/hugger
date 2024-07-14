@@ -3,17 +3,18 @@
 namespace App\Filament\Resources\ClientResource\Pages;
 
 use App\Filament\Exports\ClientExporter;
+use App\Filament\Filters\FilterIndicatorForMultipleSelections;
 use App\Filament\Resources\ClientResource;
+use App\Filament\Resources\ClientResource\Pages\Filters\ClientActionsFilter;
+use App\Filament\Resources\ClientResource\Pages\Filters\ClientDataFilter;
+use App\Filament\Resources\ClientResource\Pages\Filters\ClientDealsDataFilter;
+use App\Filament\Resources\ClientResource\Pages\Filters\ClientProductsBoughtDataFilter;
 use App\Filament\Resources\ClientResource\RelationManagers\ClientActionsRelationManager;
 use App\Models\Client;
-use App\Models\CrmAction;
-use App\Models\CrmActionState;
-use App\Models\CrmStatus;
-use App\Models\Tag;
 use App\Models\User;
 use Filament\Actions\CreateAction;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
@@ -29,17 +30,21 @@ use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Icetalker\FilamentTableRepeatableEntry\Infolists\Components\TableRepeatableEntry;
 use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 use pxlrbt\FilamentExcel\Actions\Pages\ExportAction;
 
 class ListClients extends ListRecords
 {
+    use FilterIndicatorForMultipleSelections;
+    use ClientDataFilter;
+    use ClientDealsDataFilter;
+    use ClientProductsBoughtDataFilter;
+    use ClientActionsFilter;
+
     protected static string $resource = ClientResource::class;
 
     protected function getHeaderActions(): array
@@ -56,8 +61,31 @@ class ListClients extends ListRecords
         return $table
             ->actions($this->getTableActions())
             ->columns($this->getTableColumns())
-            ->filters($this->getTableFilter(), layout: FiltersLayout::AboveContent)
-            // ->filters($this->getTableFilter(), layout: FiltersLayout::AboveContentCollapsible)
+            ->filtersFormColumns(4)
+            ->filters([
+                $this->getClientDataFilter(),
+                $this->getDealsDataFilter(),
+                $this->getProductsBoughtDataFilter(),
+                $this->getActionsFilter(),
+            ], layout: FiltersLayout::AboveContent)
+            // ], layout: FiltersLayout::AboveContentCollapsible)
+            ->filtersFormSchema(fn(array $filters): array => [
+                Section::make('Datos Cliente')
+                    ->schema([$filters['Datos Cliente']])
+                    ->columnSpan(1),
+
+                Section::make('Datos Compra')
+                    ->schema([$filters['Datos Compra']])
+                    ->columnSpan(1),
+
+                Section::make('Datos Producto')
+                    ->schema([$filters['Datos Producto']])
+                    ->columnSpan(1),
+
+                Section::make('Acciones')
+                    ->schema([$filters['Acciones']])
+                    ->columnSpan(1),
+            ])
             ->bulkActions([
                 BulkActionGroup::make([
                     BulkAction::make('Asignar responsable a clientes')
@@ -114,107 +142,6 @@ class ListClients extends ListRecords
                 ->label('Contacto')
                 ->columnSpan(2),
         ];
-    }
-
-    public function getTableFilter(): array
-    {
-        return [
-            $this->getCompanyDataFilter(),
-            $this->getDealsDataFilter(),
-            $this->getProductsDataFilter(),
-            $this->getActionsFilter(),
-        ];
-    }
-
-    private function getCompanyDataFilter()
-    {
-        $clientTypes = collect(Client::TYPES);
-        $tags = Tag::pluck('name', 'id');
-
-        return Filter::make('Datos Cliente')
-            ->form([
-                TextInput::make('name')
-                    ->label('Nombre'),
-
-                Select::make('type')
-                    ->label('Tipo Empresa')
-                    ->multiple()
-                    ->options($clientTypes),
-
-                Select::make('tags')
-                    ->multiple()
-                    ->preload()
-                    ->options($tags),
-            ])
-            ->query(function (Builder $query, array $data): Builder {
-                return $query
-                    ->when(
-                        $data['name'] ?? null,
-                        fn(Builder $query) => $query->where('name', 'like', '%' . $data['name'] . '%'),
-                    )
-                    ->when(
-                        $data['type'] ?? null,
-                        fn(Builder $query) => $query->whereIn('type', $data['type']),
-                    );
-            })
-            ->indicateUsing(function (array $data) use ($clientTypes, $tags): array {
-                $indicators = [];
-                if ($data['name'] ?? null) {
-                    $indicators['name'] = 'Nombre contiene: "' . $data['name'] . '"';
-                }
-                $this->filterIndicatorForMultipleSelection($data, $indicators, $clientTypes, 'type', 'Tipo empresa');
-                $this->filterIndicatorForMultipleSelection($data, $indicators, $tags, 'tags', 'Tags');
-
-                return $indicators;
-            });
-    }
-
-    private function filterIndicatorForMultipleSelection(array $data, array &$indicators, Collection $options, string $field, string $fieldLabel): void
-    {
-        if ($data[$field] ?? null) {
-            $labels = $options
-                ->mapWithKeys(fn(string|array $label, string $value): array => is_array($label) ? $label : [$value => $label])
-                ->only($data[$field])
-                ->all();
-
-            $indicators[$field] = $fieldLabel . ' es: ' . collect($labels)->join(', ', ' o ');;
-        }
-    }
-
-    private function getDealsDataFilter()
-    {
-        return Filter::make('Datos Compra')
-            ->form([]);
-    }
-
-    private function getProductsDataFilter()
-    {
-        return Filter::make('Datos Producto')
-            ->form([]);
-    }
-
-    private function getActionsFilter()
-    {
-        $actions = CrmAction::pluck('name', 'id');
-        $actionStates = CrmActionState::pluck('name', 'id');
-
-        return Filter::make('Acciones')
-            ->form([
-                Select::make('action')
-                    ->label('Acción')
-                    ->options($actions),
-
-                Select::make('state')
-                    ->label('Estado Acción')
-                    ->options($actionStates),
-            ])
-            ->indicateUsing(function (array $data) use ($actions, $actionStates): array {
-                $indicators = [];
-                $this->filterIndicatorForMultipleSelection($data, $indicators, $actions, 'action', 'Acción');
-                $this->filterIndicatorForMultipleSelection($data, $indicators, $actionStates, 'state', 'Estado Acción');
-
-                return $indicators;
-            });
     }
 
     public function getTableActions(): array

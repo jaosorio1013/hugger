@@ -6,6 +6,7 @@ use App\Filament\Exports\ClientExporter;
 use App\Filament\Resources\ClientResource;
 use App\Filament\Resources\ClientResource\RelationManagers\ClientActionsRelationManager;
 use App\Models\Client;
+use App\Models\Tag;
 use App\Models\User;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Components\Select;
@@ -23,7 +24,6 @@ use Filament\Tables\Actions\ForceDeleteBulkAction;
 use Filament\Tables\Actions\RestoreAction;
 use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\TagsColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
@@ -34,7 +34,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 use pxlrbt\FilamentExcel\Actions\Pages\ExportAction;
-use pxlrbt\FilamentExcel\Columns\Column;
 
 class ListClients extends ListRecords
 {
@@ -70,7 +69,7 @@ class ListClients extends ListRecords
                                         ->prepend('Sin responsable', null)
                                 )
                         ])
-                        ->action(fn (array $data, Collection $records) => $records->each->update($data)),
+                        ->action(fn(array $data, Collection $records) => $records->each->update($data)),
                     DeleteBulkAction::make(),
                     RestoreBulkAction::make(),
                     ForceDeleteBulkAction::make(),
@@ -127,6 +126,7 @@ class ListClients extends ListRecords
     private function getCompanyDataFilter()
     {
         $clientTypes = collect(Client::TYPES);
+        $tags = Tag::pluck('name', 'id');
 
         return Filter::make('Datos Cliente')
             ->form([
@@ -137,6 +137,11 @@ class ListClients extends ListRecords
                     ->label('Tipo Empresa')
                     ->multiple()
                     ->options($clientTypes),
+
+                Select::make('tags')
+                    ->multiple()
+                    ->preload()
+                    ->options($tags),
             ])
             ->query(function (Builder $query, array $data): Builder {
                 return $query
@@ -149,22 +154,28 @@ class ListClients extends ListRecords
                         fn(Builder $query) => $query->whereIn('type', $data['type']),
                     );
             })
-            ->indicateUsing(function (array $data) use ($clientTypes): array {
+            ->indicateUsing(function (array $data) use ($clientTypes, $tags): array {
                 $indicators = [];
                 if ($data['name'] ?? null) {
                     $indicators['name'] = 'Nombre contiene: "' . $data['name'] . '"';
                 }
-                if ($data['type'] ?? null) {
-                    $labels = $clientTypes
-                        ->mapWithKeys(fn (string | array $label, string $value): array => is_array($label) ? $label : [$value => $label])
-                        ->only($data['type'])
-                        ->all();
-
-                    $indicators['type'] = 'Tipo empresa es: ' . collect($labels)->join(', ', ' o ');;
-                }
+                $this->filterIndicatorForMultipleSelection($data, $indicators, $clientTypes, 'type', 'Tipo empresa');
+                $this->filterIndicatorForMultipleSelection($data, $indicators, $tags, 'tags', 'Tags');
 
                 return $indicators;
             });
+    }
+
+    private function filterIndicatorForMultipleSelection(array $data, array &$indicators, Collection $options, string $field, string $fieldLabel): void
+    {
+        if ($data[$field] ?? null) {
+            $labels = $options
+                ->mapWithKeys(fn(string|array $label, string $value): array => is_array($label) ? $label : [$value => $label])
+                ->only($data[$field])
+                ->all();
+
+            $indicators[$field] = $fieldLabel . ' es: ' . collect($labels)->join(', ', ' o ');;
+        }
     }
 
     private function getDealsDataFilter()

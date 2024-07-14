@@ -6,6 +6,9 @@ use App\Filament\Exports\ClientExporter;
 use App\Filament\Resources\ClientResource;
 use App\Filament\Resources\ClientResource\RelationManagers\ClientActionsRelationManager;
 use App\Models\Client;
+use App\Models\CrmAction;
+use App\Models\CrmActionState;
+use App\Models\CrmStatus;
 use App\Models\Tag;
 use App\Models\User;
 use Filament\Actions\CreateAction;
@@ -192,8 +195,26 @@ class ListClients extends ListRecords
 
     private function getActionsFilter()
     {
+        $actions = CrmAction::pluck('name', 'id');
+        $actionStates = CrmActionState::pluck('name', 'id');
+
         return Filter::make('Acciones')
-            ->form([]);
+            ->form([
+                Select::make('action')
+                    ->label('Acción')
+                    ->options($actions),
+
+                Select::make('state')
+                    ->label('Estado Acción')
+                    ->options($actionStates),
+            ])
+            ->indicateUsing(function (array $data) use ($actions, $actionStates): array {
+                $indicators = [];
+                $this->filterIndicatorForMultipleSelection($data, $indicators, $actions, 'action', 'Acción');
+                $this->filterIndicatorForMultipleSelection($data, $indicators, $actionStates, 'state', 'Estado Acción');
+
+                return $indicators;
+            });
     }
 
     public function getTableActions(): array

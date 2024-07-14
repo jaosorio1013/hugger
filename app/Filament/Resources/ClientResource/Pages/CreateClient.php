@@ -4,6 +4,7 @@ namespace App\Filament\Resources\ClientResource\Pages;
 
 use App\Filament\Resources\ClientResource;
 use App\Models\Client;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
@@ -14,9 +15,7 @@ class CreateClient extends CreateRecord
 
     protected function getHeaderActions(): array
     {
-        return [
-
-        ];
+        return [];
     }
 
     public static function getFormFields(): array
@@ -60,6 +59,13 @@ class CreateClient extends CreateRecord
                 ->label('Ciudad')
                 ->relationship('city', 'name')
                 ->searchable(),
+
+            Select::make('tags')
+                ->relationship('tags', 'name')
+                ->createOptionForm([
+                    TextInput::make('name')->required()
+                ])
+                ->multiple(),
         ];
     }
 }

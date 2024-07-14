@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\ClientResource\RelationManagers;
 
 use App\Models\CrmAction;
-use App\Models\CrmState;
+use App\Models\CrmActionState;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
@@ -45,9 +45,9 @@ class ClientActionsRelationManager extends RelationManager
                 ->preload()
                 ->required(),
 
-            Select::make('crm_state_id')
+            Select::make('crm_action_state_id')
                 ->label('Estado')
-                ->options(CrmState::pluck('name', 'id'))
+                ->options(CrmActionState::pluck('name', 'id'))
                 ->preload()
                 ->required(),
 

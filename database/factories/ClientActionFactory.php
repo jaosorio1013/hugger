@@ -5,7 +5,7 @@ namespace Database\Factories;
 use App\Models\Client;
 use App\Models\ClientAction;
 use App\Models\CrmAction;
-use App\Models\CrmState;
+use App\Models\CrmActionState;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
@@ -22,7 +22,7 @@ class ClientActionFactory extends Factory
 
             'client_id' => Client::inRandomOrder()->value('id'),
             'crm_action_id' => CrmAction::inRandomOrder()->value('id'),
-            'crm_state_id' => CrmState::inRandomOrder()->value('id'),
+            'crm_action_state_id' => CrmActionState::inRandomOrder()->value('id'),
         ];
     }
 }

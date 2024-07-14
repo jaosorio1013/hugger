@@ -18,7 +18,7 @@ class ClientAction extends Model
     protected $fillable = [
         'client_id',
         'crm_action_id',
-        'crm_state_id',
+        'crm_action_state_id',
         'notes',
     ];
 
@@ -34,7 +34,7 @@ class ClientAction extends Model
 
     public function state(): BelongsTo
     {
-        return $this->belongsTo(CrmState::class, 'crm_state_id');
+        return $this->belongsTo(CrmActionState::class, 'crm_action_state_id');
     }
 
     public function getActivitylogOptions(): LogOptions

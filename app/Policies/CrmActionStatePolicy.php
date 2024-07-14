@@ -2,11 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\CrmState;
+use App\Models\CrmActionState;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class CrmStatePolicy
+class CrmActionStatePolicy
 {
     use HandlesAuthorization;
 
@@ -15,7 +15,7 @@ class CrmStatePolicy
         return true;
     }
 
-    public function view(User $user, CrmState $crmState)
+    public function view(User $user, CrmActionState $crmState)
     {
         return true;
     }
@@ -25,22 +25,22 @@ class CrmStatePolicy
         return true;
     }
 
-    public function update(User $user, CrmState $crmState)
+    public function update(User $user, CrmActionState $crmState)
     {
         return true;
     }
 
-    public function delete(User $user, CrmState $crmState)
+    public function delete(User $user, CrmActionState $crmState)
     {
         return true;
     }
 
-    public function restore(User $user, CrmState $crmState)
+    public function restore(User $user, CrmActionState $crmState)
     {
         return true;
     }
 
-    public function forceDelete(User $user, CrmState $crmState)
+    public function forceDelete(User $user, CrmActionState $crmState)
     {
         return true;
     }

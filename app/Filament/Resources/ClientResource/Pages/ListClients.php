@@ -23,6 +23,7 @@ use Filament\Tables\Actions\ForceDeleteBulkAction;
 use Filament\Tables\Actions\RestoreAction;
 use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TagsColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
@@ -96,6 +97,8 @@ class ListClients extends ListRecords
                     $client->user?->name ?? '<i style="color: #fc8d8d; ">Sin responsable</i>'
                 ))
                 ->sortable(),
+
+            TextColumn::make('tags.name')->badge()->width(250),
 
             TextColumn::make('nit')
                 ->label('Datos')

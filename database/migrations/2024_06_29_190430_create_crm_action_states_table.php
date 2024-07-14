@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\CrmState;
+use App\Models\CrmActionState;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up()
     {
-        Schema::create('crm_states', function (Blueprint $table) {
+        Schema::create('crm_action_states', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
             $table->timestamps();
@@ -20,12 +20,12 @@ return new class extends Migration {
         ];
 
         foreach ($states as $state) {
-            CrmState::create(['name' => $state]);
+            CrmActionState::create(['name' => $state]);
         }
     }
 
     public function down()
     {
-        Schema::dropIfExists('crm_states');
+        Schema::dropIfExists('crm_action_states');
     }
 };

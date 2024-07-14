@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\CrmActionStateResource\Pages;
-use App\Models\CrmActionState;
+use App\Filament\Resources\TagResource\Pages;
+use App\Models\Tag;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -15,34 +15,28 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class CrmActionStateResource extends Resource
+class TagResource extends Resource
 {
-    protected static ?string $model = CrmActionState::class;
+    protected static ?string $model = Tag::class;
 
-    protected static ?string $slug = 'crm-states';
+    protected static ?string $slug = 'tags';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
-    protected static ?int $navigationSort = 12;
-    protected static ?string $label = 'Estado';
-    protected static ?string $pluralLabel = 'Estados';
-    protected static ?string $navigationGroup = 'Gestión';
-    protected static bool $shouldRegisterNavigation = false;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                TextInput::make('name')
-                    ->required(),
-
                 Placeholder::make('created_at')
                     ->label('Created Date')
-                    ->content(fn(?CrmActionState $record): string => $record?->created_at?->diffForHumans() ?? '-'),
+                    ->content(fn(?Tag $record): string => $record?->created_at?->diffForHumans() ?? '-'),
 
                 Placeholder::make('updated_at')
                     ->label('Last Modified Date')
-                    ->content(fn(?CrmActionState $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
+                    ->content(fn(?Tag $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
+
+                TextInput::make('name')
+                    ->required(),
             ]);
     }
 
@@ -58,8 +52,8 @@ class CrmActionStateResource extends Resource
                 //
             ])
             ->actions([
-                EditAction::make()->label(''),
-                DeleteAction::make()->label(''),
+                EditAction::make(),
+                DeleteAction::make(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
@@ -71,9 +65,9 @@ class CrmActionStateResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListCrmActionState::route('/'),
-            'create' => Pages\CreateCrmActionState::route('/create'),
-            'edit' => Pages\EditCrmActionState::route('/{record}/edit'),
+            'index' => Pages\ListTags::route('/'),
+            'create' => Pages\CreateTag::route('/create'),
+            'edit' => Pages\EditTag::route('/{record}/edit'),
         ];
     }
 

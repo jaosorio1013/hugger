@@ -11,7 +11,7 @@ class ClientActionRequest extends FormRequest
         return [
             'client_id' => ['required', 'exists:clients'],
             'crm_action_id' => ['required', 'exists:crm_actions'],
-            'crm_state_id' => ['required', 'exists:crm_states'],
+            'crm_action_state_id' => ['required', 'exists:crm_states'],
             'notes' => ['nullable'],
         ];
     }

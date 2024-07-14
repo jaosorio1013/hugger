@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\CrmStateResource\Pages;
+namespace App\Filament\Resources\TagResource\Pages;
 
-use App\Filament\Resources\CrmStateResource;
+use App\Filament\Resources\TagResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
-class ListCrmStates extends ListRecords
+class ListTags extends ListRecords
 {
-    protected static string $resource = CrmStateResource::class;
+    protected static string $resource = TagResource::class;
 
     protected function getHeaderActions(): array
     {

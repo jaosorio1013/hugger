@@ -4,7 +4,14 @@
     "description": "The skeleton application for the Laravel framework.",
     "keywords": ["laravel", "framework"],
     "license": "MIT",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/jaosorio1013/filament-import"
+        }
+    ],
     "require": {
+        "jaosorio1013/filament-import": "dev-filament3",
         "php": "^8.2",
         "awcodes/filament-table-repeater": "^3.0",
         "filament/filament": "^3.2",

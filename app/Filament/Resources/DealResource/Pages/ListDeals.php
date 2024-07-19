@@ -13,6 +13,8 @@ class ListDeals extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+            ImportDeals::action(),
+
             CreateAction::make(),
         ];
     }

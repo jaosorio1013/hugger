@@ -36,9 +36,11 @@ class Deal extends Model
     {
         parent::boot();
 
-        self::created(function (Deal $deal) {
-            $deal->client_name = $deal->client->name;
-            $deal->save();
+        self::saved(function (Deal $deal) {
+            if ($deal->client_name === null && $deal->client_id !== null) {
+                $deal->client_name = $deal->client->name;
+                $deal->save();
+            }
         });
     }
 

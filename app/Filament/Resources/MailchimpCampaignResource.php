@@ -71,6 +71,10 @@ class MailchimpCampaignResource extends Resource
             ->filters([
                 TrashedFilter::make(),
             ])
+            ->recordUrl(
+                fn(MailchimpCampaign $record): string => 'https://us14.admin.mailchimp.com/reports/summary?id=' . $record->mailchimp_id
+            )
+            ->openRecordUrlInNewTab()
             ->actions([
                 // EditAction::make()->label(''),
                 // DeleteAction::make()->label(''),

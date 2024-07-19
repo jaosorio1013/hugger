@@ -13,8 +13,8 @@ return new class extends Migration {
             $table->foreignId('client_id');
             $table->foreignId('product_id');
             $table->unsignedInteger('quantity')->default(1);
-            $table->decimal('price')->default(0);
-            $table->decimal('total', 15, 2)->default(0);
+            $table->decimal('price', 20)->default(0);
+            $table->decimal('total', 20)->default(0);
             $table->softDeletes();
             $table->timestamps();
         });

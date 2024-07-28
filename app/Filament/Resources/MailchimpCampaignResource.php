@@ -31,7 +31,7 @@ class MailchimpCampaignResource extends Resource
     protected static ?int $navigationSort = 19;
     protected static ?string $label = 'Campaña';
     protected static ?string $pluralLabel = 'Campañas';
-    protected static ?string $navigationGroup = 'Gestión';
+    protected static ?string $navigationGroup = 'Mailing';
 
     public static function form(Form $form): Form
     {

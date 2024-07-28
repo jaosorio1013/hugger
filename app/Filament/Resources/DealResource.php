@@ -3,14 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\DealResource\Pages;
+use App\Filament\Resources\DealResource\UpdateTotalsOnDeals;
 use App\Models\Deal;
 use App\Models\Product;
 use App\Tables\Columns\DealDetailsColumn;
-use Awcodes\TableRepeater\Components\TableRepeater;
-use Awcodes\TableRepeater\Header;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -29,12 +27,9 @@ use Filament\Tables\Actions\ForceDeleteAction;
 use Filament\Tables\Actions\ForceDeleteBulkAction;
 use Filament\Tables\Actions\RestoreAction;
 use Filament\Tables\Actions\RestoreBulkAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\Layout\Panel;
 use Filament\Tables\Columns\Layout\Split;
-use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Icetalker\FilamentTableRepeatableEntry\Infolists\Components\TableRepeatableEntry;
 use Illuminate\Database\Eloquent\Builder;
@@ -43,6 +38,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class DealResource extends Resource
 {
+    use UpdateTotalsOnDeals;
+
     protected static ?string $model = Deal::class;
 
     protected static ?string $slug = 'deals';
@@ -84,7 +81,7 @@ class DealResource extends Resource
                             ->modalDescription('Todos los artículos existentes se eliminarán del pedido.')
                             ->requiresConfirmation()
                             ->color('danger')
-                            ->action(fn (Set $set) => $set('details', [])),
+                            ->action(fn(Set $set) => $set('details', [])),
                     ])
                     ->schema([
                         static::getDealProducts()
@@ -110,17 +107,11 @@ class DealResource extends Resource
 
         return Repeater::make('details')
             ->relationship()
-            // ->headers([
-            //     Header::make('Producto'),
-            //     Header::make('Cantidad'),
-            //     Header::make('Precio Unitario'),
-            //     Header::make('Total'),
-            // ])
             ->schema([
                 Select::make('product_id')
                     ->label('Producto')
                     ->options(Product::query()->pluck('name', 'id'))
-                    ->live()
+                    ->live(true)
                     ->required()
                     ->afterStateUpdated(
                         function (Get $get, Set $set) {
@@ -137,13 +128,13 @@ class DealResource extends Resource
 
                 TextInput::make('quantity')
                     ->afterStateUpdated(
-                        fn (Get $get, $livewire, Set $set) => $set('total', $get('price') * $get('quantity'))
+                        fn(Get $get, $livewire, Set $set) => $set('total', $get('price') * $get('quantity'))
                     )
                     ->numeric()
                     ->minValue(1)
                     ->default(1)
                     ->required()
-                    ->live()
+                    ->live(true)
                     ->columnSpan([
                         'md' => 1,
                     ]),
@@ -153,32 +144,31 @@ class DealResource extends Resource
                     ->prefix('$')
                     ->suffix('COP')
                     ->afterStateUpdated(
-                        fn (Get $get, $livewire, Set $set) => $set('total', $get('price') * $get('quantity'))
+                        fn(Get $get, $livewire, Set $set) => $set('total', $get('price') * $get('quantity'))
                     )
                     ->minValue(0)
                     ->required()
                     ->numeric()
-                    ->live(),
+                    ->live(true),
 
                 TextInput::make('total')
                     ->afterStateUpdated(
-                        fn (Get $get, $livewire, Set $set) => $set('.total', 123)
+                        fn(Get $get, $livewire, Set $set) => $set('.total', 123)
                     )
                     ->prefix('$')
                     ->suffix('COP')
                     ->required()
                     ->disabled()
                     ->numeric()
-                    ->live(),
+                    ->live(true),
             ])
-            ->live()
+            ->live(true)
             ->afterStateUpdated(function (Get $get, $livewire) {
                 self::updateTotals($get, $livewire);
             })
             ->deleteAction(
-                fn (Action $action) => $action->after(fn (Get $get, $livewire) => self::updateTotals($get, $livewire)),
+                fn(Action $action) => $action->after(fn(Get $get, $livewire) => self::updateTotals($get, $livewire)),
             )
-            // ->reorderable(true)
             ->required();
     }
 
@@ -192,7 +182,7 @@ class DealResource extends Resource
             return;
         }
 
-        $selectedProducts = collect($products)->filter(fn ($item) => !empty($item['product_id']) && !empty($item['quantity']));
+        $selectedProducts = collect($products)->filter(fn($item) => !empty($item['product_id']) && !empty($item['quantity']));
 
         $prices = collect($products)->pluck('price', 'product_id');
 
@@ -207,18 +197,12 @@ class DealResource extends Resource
     {
         return $table
             ->columns(static::getTableColumns())
-            // ->filters([
-            //     TrashedFilter::make(),
-            // ])
-            // ->recordUrl(null)
-            // ->recordAction(ViewAction::class)
             ->actions([
-                // ViewAction::make()->label(' '),
-                EditAction::make()->label('')->modalWidth(900),
                 DeleteAction::make()->label(''),
                 RestoreAction::make(),
                 ForceDeleteAction::make(),
             ])
+            ->recordUrl(fn($record) => Pages\EditDeal::getUrl([$record]))
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
@@ -242,7 +226,6 @@ class DealResource extends Resource
 
                 TextColumn::make('client.name')
                     ->label('Cliente')
-                    // ->searchable()
                     ->sortable(),
 
                 TextColumn::make('total')

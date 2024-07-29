@@ -12,6 +12,7 @@ class Tag extends Model
 
     protected $fillable = [
         'name',
+        'mailchimp_id',
     ];
 
     public function clients(): BelongsToMany

@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->string('phone')->nullable();
             $table->string('email')->nullable();
             $table->string('address')->nullable();
+            $table->string('mailchimp_id')->nullable();
             $table->unsignedTinyInteger('type')->default(Client::TYPE_NATURAL)->index();
             $table->foreignId('user_id')->nullable();
             $table->foreignId('crm_font_id')->nullable();

@@ -33,6 +33,7 @@ class Client extends Model
         'phone',
         'email',
         'address',
+        'mailchimp_id',
         'type',
         'user_id',
         'crm_font_id',
@@ -86,7 +87,7 @@ class Client extends Model
 
     public function tags(): BelongsToMany
     {
-        return $this->belongsToMany(Tag::class);
+        return $this->belongsToMany(Tag::class)->withPivot('registered_on_mailchimp');
     }
 
     // public function mailchimp_audiences()

@@ -10,6 +10,7 @@ return new class extends Migration {
         Schema::create('client_tag', function (Blueprint $table) {
             $table->foreignId('client_id')->constrained();
             $table->foreignId('tag_id')->constrained();
+            $table->boolean('registered_on_mailchimp')->default(false);
         });
     }
 

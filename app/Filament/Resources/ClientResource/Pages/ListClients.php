@@ -64,27 +64,27 @@ class ListClients extends ListRecords
             ->filtersFormColumns(4)
             ->filters([
                 $this->getClientDataFilter(),
-                $this->getDealsDataFilter(),
-                $this->getProductsBoughtDataFilter(),
-                $this->getActionsFilter(),
+                // $this->getDealsDataFilter(),
+                // $this->getProductsBoughtDataFilter(),
+                // $this->getActionsFilter(),
             ], layout: FiltersLayout::AboveContentCollapsible)
-            ->filtersFormSchema(fn(array $filters): array => [
-                Section::make('Datos Cliente')
-                    ->schema([$filters['Datos Cliente']])
-                    ->columnSpan(1),
-
-                Section::make('Datos Compra')
-                    ->schema([$filters['Datos Compra']])
-                    ->columnSpan(1),
-
-                Section::make('Datos Producto')
-                    ->schema([$filters['Datos Producto']])
-                    ->columnSpan(1),
-
-                Section::make('Acciones')
-                    ->schema([$filters['Acciones']])
-                    ->columnSpan(1),
-            ])
+            // ->filtersFormSchema(fn(array $filters): array => [
+            //     Section::make('Datos Cliente')
+            //         ->schema([$filters['Datos Cliente']])
+            //         ->columnSpan(1),
+            //
+            //     Section::make('Datos Compra')
+            //         ->schema([$filters['Datos Compra']])
+            //         ->columnSpan(1),
+            //
+            //     Section::make('Datos Producto')
+            //         ->schema([$filters['Datos Producto']])
+            //         ->columnSpan(1),
+            //
+            //     Section::make('Acciones')
+            //         ->schema([$filters['Acciones']])
+            //         ->columnSpan(1),
+            // ])
             ->bulkActions([
                 BulkActionGroup::make([
                     BulkAction::make('Asignar responsable a clientes')

@@ -56,7 +56,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->plugins([
                 ActivitylogPlugin::make()
-                    // ->authorize(fn() => auth()->user()->is_admin === true)
+                    ->authorize(fn() => auth()->user()->is_admin)
                     ->navigationGroup('Gestión')
                     ->navigationSort(29),
             ])

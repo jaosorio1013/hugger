@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'MAILCHIMP_TAG_PREFIX' => 'CRM--',
+
     'MALCHIMP_LIST' => 'ee38144b7f',
 
     'colors' => [

@@ -13,7 +13,17 @@ class Tag extends Model
     protected $fillable = [
         'name',
         'mailchimp_id',
+        'mailchimp_name',
     ];
+
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        self::saving(function (Tag $tag) {
+            $tag->mailchimp_name = config('hugger.MAILCHIMP_TAG_PREFIX') . $tag->name;
+        });
+    }
 
     public function clients(): BelongsToMany
     {

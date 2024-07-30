@@ -10,6 +10,7 @@ return new class extends Migration {
         Schema::create('tags', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
+            $table->string('mailchimp_name')->unique();
             $table->string('mailchimp_id')->nullable();
             $table->timestamps();
         });

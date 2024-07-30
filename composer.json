@@ -11,11 +11,11 @@
         }
     ],
     "require": {
-        "jaosorio1013/filament-import": "dev-filament3",
         "php": "^8.2",
         "awcodes/filament-table-repeater": "^3.0",
         "filament/filament": "^3.2",
         "icetalker/filament-table-repeatable-entry": "^1.0",
+        "jaosorio1013/filament-import": "dev-filament3",
         "laravel/framework": "^11.0",
         "laravel/tinker": "^2.9",
         "mailchimp/marketing": "^3.0",

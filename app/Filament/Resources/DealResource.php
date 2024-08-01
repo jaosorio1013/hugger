@@ -7,9 +7,10 @@ use App\Filament\Resources\DealResource\UpdateTotalsOnDeals;
 use App\Models\Deal;
 use App\Models\Product;
 use App\Tables\Columns\DealDetailsColumn;
+use Awcodes\TableRepeater\Components\TableRepeater;
+use Awcodes\TableRepeater\Header;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -111,25 +112,28 @@ class DealResource extends Resource
 
     public static function getDealProducts()
     {
-        return Repeater::make('details')
+        return TableRepeater::make('details')
             ->relationship()
+            ->headers([
+                Header::make('Producto'),
+                Header::make('Cantidad'),
+                Header::make('Valor Unitario'),
+                Header::make('Total'),
+            ])
             ->schema([
                 Select::make('product_id')
                     ->label('Producto')
                     ->options(Product::query()->pluck('name', 'id'))
-                    ->live(true)
                     ->required()
                     ->afterStateUpdated(
-                        function (Get $get, Set $set) {
+                        function (Get $get, Set $set, $livewire) {
                             $set('price', Product::find($get('product_id'))?->price ?? 0);
                             $set('total', $get('price') * $get('quantity'));
+                            self::updateTotals($get, $livewire);
                         }
                     )
                     ->distinct()
                     ->disableOptionsWhenSelectedInSiblingRepeaterItems()
-                    ->columnSpan([
-                        'md' => 5,
-                    ])
                     ->searchable(),
 
                 TextInput::make('quantity')
@@ -139,14 +143,10 @@ class DealResource extends Resource
                     ->numeric()
                     ->minValue(1)
                     ->default(1)
-                    ->required()
-                    ->live(true)
-                    ->columnSpan([
-                        'md' => 1,
-                    ]),
+                    ->required(),
 
                 TextInput::make('price')
-                    // ->label('Valor Unitario')
+                    ->label('Valor Unitario')
                     ->prefix('$')
                     ->suffix('COP')
                     ->afterStateUpdated(
@@ -154,18 +154,16 @@ class DealResource extends Resource
                     )
                     ->minValue(0)
                     ->required()
-                    ->numeric()
-                    ->live(true),
+                    ->numeric(),
 
                 TextInput::make('total')
                     ->prefix('$')
                     ->suffix('COP')
                     ->required()
                     ->disabled()
-                    ->numeric()
-                    ->live(true),
+                    ->numeric(),
             ])
-            ->live( )
+            ->live(true)
             ->afterStateUpdated(function (Get $get, $livewire) {
                 self::updateTotals($get, $livewire);
             })

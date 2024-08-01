@@ -19,7 +19,9 @@ class DealsRelationManager extends RelationManager
 
     public function form(Form $form): Form
     {
-        return DealResource::form($form);
+        return $form->schema(
+            DealResource::getFormSchema(   true)
+        );
     }
 
     public function table(Table $table): Table
@@ -27,6 +29,10 @@ class DealsRelationManager extends RelationManager
         return DealResource::table($table)
             ->headerActions([
                 CreateAction::make()
+                    ->url(DealResource\Pages\CreateDeal::getUrl([
+                        'client_id' => 1
+                    ]))
+                    ->openUrlInNewTab()
                     ->modalHeading('Crear compra')
                     ->label('Crear compra')
                     ->modalWidth(900),

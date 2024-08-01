@@ -2,11 +2,13 @@
 
 namespace App\Filament\Resources\ClientResource\Pages\Filters;
 
+use App\Models\Client;
 use App\Models\DealDetail;
 use App\Models\Product;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 trait ClientProductsBoughtDataFilter
 {
@@ -29,18 +31,23 @@ trait ClientProductsBoughtDataFilter
             ->query(function (Builder $query, array $data): Builder {
                 $clientsIds = DealDetail::query()
                     ->when(
-                        $data['products_bought'] ?? null,
-                        fn(Builder $query) => $query->whereIn('product_id', $data['products_bought']),
+                        $data['products_not_bought'] ?? null,
+                        fn(Builder $query) => $query->whereNotIn('product_id', $data['products_not_bought']),
+                    )
+                    ->pluck('client_id')
+                    ->merge(
+                        Client::whereDoesntHave('deals')->pluck('id')
                     )
                     ->when(
                         $data['products_bought'] ?? null,
-                        fn(Builder $query) => $query->whereNotIn('product_id', $data['products_not_bought']),
-                    )
-                    ->pluck('client_id');
+                        fn(Collection $ids) => DealDetail::whereIn('product_id', $data['products_bought'])
+                            ->whereIn('client_id', $ids)
+                            ->pluck('client_id')
+                    );
 
                 return $query
                     ->when(
-                        $clientsIds ?? null,
+                        !empty($data['products_bought']) || !empty($data['products_not_bought']),
                         fn(Builder $query) => $query->whereIn('id', $clientsIds),
                     );
             })

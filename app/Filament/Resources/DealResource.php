@@ -22,7 +22,6 @@ use Filament\Resources\Resource;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ForceDeleteAction;
 use Filament\Tables\Actions\ForceDeleteBulkAction;
 use Filament\Tables\Actions\RestoreAction;
@@ -35,6 +34,7 @@ use Icetalker\FilamentTableRepeatableEntry\Infolists\Components\TableRepeatableE
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Livewire\Component as Livewire;
 
 class DealResource extends Resource
 {
@@ -53,58 +53,64 @@ class DealResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Section::make()->columns(2)->schema([
-                    TextInput::make('code')
-                        ->label('Factura'),
+            ->schema(self::getFormSchema());
+    }
 
-                    DatePicker::make('date')
-                        ->label('Fecha Compra'),
+    public static function getFormSchema(bool $onRelationManager = false): array
+    {
+        return [
+            Section::make()->columns(2)->schema([
+                TextInput::make('code')
+                    ->label('Factura'),
 
-                    Select::make('client_id')
-                        ->label('Cliente')
-                        ->relationship('client', 'name')
-                        ->searchable()
-                        ->required(),
+                DatePicker::make('date')
+                    ->label('Fecha Compra'),
 
-                    Select::make('client_contact_id')
-                        ->label('Contacto cliente')
-                        ->relationship('contact', 'name')
-                        ->searchable()
-                        ->required(),
+                Select::make('client_id')
+                    ->label('Cliente')
+                    ->relationship('client', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->default(
+                        request()->get('client_id')
+                    )
+                    ->required(),
+
+                Select::make('client_contact_id')
+                    ->label('Contacto cliente')
+                    ->relationship('contact', 'name')
+                    ->searchable(),
+            ]),
+
+            Section::make('Detalle')
+                ->headerActions([
+                    Action::make('Eliminar Productos de la Compra')
+                        // ->modalHeading('Estas seguro?')
+                        ->modalDescription('Todos los artículos existentes se eliminarán del pedido.')
+                        ->requiresConfirmation()
+                        ->color('danger')
+                        ->action(fn(Set $set) => $set('details', [])),
+                ])
+                ->schema([
+                    static::getDealProducts()
                 ]),
 
-                Section::make('Detalle')
-                    ->headerActions([
-                        Action::make('Eliminar Productos de la Compra')
-                            // ->modalHeading('Estas seguro?')
-                            ->modalDescription('Todos los artículos existentes se eliminarán del pedido.')
-                            ->requiresConfirmation()
-                            ->color('danger')
-                            ->action(fn(Set $set) => $set('details', [])),
-                    ])
-                    ->schema([
-                        static::getDealProducts()
-                    ]),
-
-                Section::make()
-                    ->columns(1)
-                    ->schema([
-                        TextInput::make('total')
-                            ->label('Gran Total')
-                            ->disabled()
-                            ->numeric()
-                            ->required()
-                            ->prefix('$')
-                            ->suffix('COP')
-                    ])
-            ]);
+            Section::make()
+                ->columns(1)
+                ->schema([
+                    TextInput::make('total')
+                        ->label('Gran Total')
+                        ->disabled()
+                        ->numeric()
+                        ->required()
+                        ->prefix('$')
+                        ->suffix('COP')
+                ])
+        ];
     }
 
     public static function getDealProducts()
     {
-        // Repeater::
-
         return Repeater::make('details')
             ->relationship()
             ->schema([
@@ -152,9 +158,6 @@ class DealResource extends Resource
                     ->live(true),
 
                 TextInput::make('total')
-                    ->afterStateUpdated(
-                        fn(Get $get, $livewire, Set $set) => $set('.total', 123)
-                    )
                     ->prefix('$')
                     ->suffix('COP')
                     ->required()
@@ -162,20 +165,23 @@ class DealResource extends Resource
                     ->numeric()
                     ->live(true),
             ])
-            ->live(true)
+            ->live( )
             ->afterStateUpdated(function (Get $get, $livewire) {
                 self::updateTotals($get, $livewire);
             })
             ->deleteAction(
-                fn(Action $action) => $action->after(fn(Get $get, $livewire) => self::updateTotals($get, $livewire)),
+                fn(Action $action) => $action->after(
+                    fn(Get $get, $livewire) => self::updateTotals($get, $livewire)
+                ),
             )
             ->required();
     }
 
-    public static function updateTotals(Get $get, $livewire): void
+    public static function updateTotals(Get $get, Livewire $livewire): void
     {
         // Retrieve the state path of the form. Most likely, it's `data` but could be something else.
         $statePath = $livewire->getFormStatePath();
+        // $statePath = 'data';
 
         $products = data_get($livewire, $statePath . '.details');
         if (collect($products)->isEmpty()) {

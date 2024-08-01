@@ -42,7 +42,7 @@ trait ClientDealsDataFilter
 
                 return $query
                     ->when(
-                        $clientsIds ?? null,
+                        !empty($data['number_purchases']) || !empty($data['amount_purchases']),
                         fn(Builder $query) => $query->whereIn('id', $clientsIds),
                     );
             })

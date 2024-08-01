@@ -27,7 +27,7 @@ trait ClientActionsFilter
                     ->options($actionStates),
             ])
             ->query(function (Builder $query, array $data): Builder {
-                $clientActions = ClientAction::query()
+                $clientsIds = ClientAction::query()
                     ->when(
                         $data['action'] ?? null,
                             fn(Builder $query) => $query->where('crm_action_id', $data['action']),
@@ -40,8 +40,8 @@ trait ClientActionsFilter
 
                 return $query
                     ->when(
-                        $clientActions ?? null,
-                        fn(Builder $query) => $query->whereIn('id', $clientActions),
+                        !empty($data['action']) || !empty($data['state']),
+                        fn(Builder $query) => $query->whereIn('id', $clientsIds),
                     );
             })
             ->indicateUsing(function (array $data) use ($actions, $actionStates): array {

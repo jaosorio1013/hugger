@@ -36,7 +36,16 @@ class Deal extends Model
     {
         parent::boot();
 
+        self::saving(function (Deal $deal) {
+
+        });
+
         self::saved(function (Deal $deal) {
+            // if ($deal->owner_id === null && $deal->owner_id !== null) {
+            //     $deal->owner_id = $deal->client->;
+            //     $deal->save();
+            // }
+
             if ($deal->client_name === null && $deal->client_id !== null) {
                 $deal->client_name = $deal->client->name;
                 $deal->save();
@@ -51,7 +60,7 @@ class Deal extends Model
 
     public function contact(): BelongsTo
     {
-        return $this->belongsTo(ClientContact::class);
+        return $this->belongsTo(ClientContact::class, 'client_contact_id');
     }
 
     public function details(): HasMany

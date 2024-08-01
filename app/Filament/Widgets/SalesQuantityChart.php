@@ -2,8 +2,11 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\Deal;
+use App\Models\User;
 use Filament\Support\Colors\Color;
 use Filament\Widgets\ChartWidget;
+use Illuminate\Support\Facades\DB;
 
 class SalesQuantityChart extends ChartWidget
 {
@@ -22,6 +25,31 @@ class SalesQuantityChart extends ChartWidget
 
     protected function getData(): array
     {
+        // SELECT
+        //   DATE_FORMAT(production_timestamp, ‘%m-%Y’) AS production_month,
+        //   COUNT(id) AS count
+        // FROM hoodie
+        // GROUP BY
+        //   MONTH(production_timestamp),
+        //   YEAR(production_timestamp);
+
+        // $data = [];
+        // $users = User::pluck('name', 'id');
+        // Deal::query()
+        //     ->groupBy([
+        //         'owner_id',
+        //
+        //     ])
+        //     ->select([
+        //         'DATE_FORMAT(date, ‘%Y-%m’) AS date',
+        //     ]);
+
+        // DB::table('deals')
+        //     ->
+        // foreach ($users as $user) {
+        //     dd($user);
+        // }
+
         return [
             'datasets' => [
                 [

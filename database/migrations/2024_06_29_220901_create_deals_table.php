@@ -15,6 +15,9 @@ return new class extends Migration {
             $table->decimal('total', 20)->nullable();
             $table->foreignId('client_id')->nullable();
             $table->foreignId('client_contact_id')->nullable();
+
+            $table->foreignId('owner_id')->nullable();
+
             $table->softDeletes();
             $table->timestamps();
         });

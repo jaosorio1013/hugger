@@ -88,7 +88,7 @@ class ListClients extends ListRecords
             ->bulkActions([
                 BulkActionGroup::make([
                     BulkAction::make('Asignar responsable a clientes')
-                        ->icon('heroicon-o-arrow-path-rounded-square')
+                        ->icon('heroicon-c-share')
                         ->deselectRecordsAfterCompletion()
                         ->color('info')
                         ->form([

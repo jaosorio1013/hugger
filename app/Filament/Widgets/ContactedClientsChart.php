@@ -2,12 +2,10 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Client;
 use App\Models\ClientAction;
 use Carbon\Carbon;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class ContactedClientsChart extends ChartWidget
@@ -49,18 +47,18 @@ class ContactedClientsChart extends ChartWidget
     private function getClientsContacted()
     {
         // return Cache::rememberForever('getClientsContacted', function () {
-            return ClientAction::query()
-                ->where('created_at', '>=', Carbon::now()->subMonths(self::CHART_MONTHS))
-                ->groupBy('date_mont', 'user_id')
-                ->get([
-                    'user_id',
-                    DB::raw('COUNT(id) AS count'),
-                    DB::raw("DATE_FORMAT(created_at, '%Y-%m') AS date_mont")
-                ])
-                ->groupBy('user_id')
-                ->map(function (Collection $clientsContactedByUser) {
-                    return $clientsContactedByUser->keyBy('date_mont')->toArray();
-                });
+        return ClientAction::query()
+            ->where('created_at', '>=', Carbon::now()->subMonths(self::CHART_MONTHS))
+            ->groupBy('date_mont', 'user_id')
+            ->get([
+                'user_id',
+                DB::raw('COUNT(id) AS count'),
+                DB::raw("DATE_FORMAT(created_at, '%Y-%m') AS date_mont")
+            ])
+            ->groupBy('user_id')
+            ->map(function (Collection $clientsContactedByUser) {
+                return $clientsContactedByUser->keyBy('date_mont')->toArray();
+            });
         // });
     }
 

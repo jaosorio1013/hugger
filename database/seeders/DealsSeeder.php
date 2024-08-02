@@ -13,8 +13,8 @@ class DealsSeeder extends Seeder
         Client::query()
             ->take(8)
             ->pluck('id')
-            ->each(fn ($clientId) => Deal::factory(rand(1, 5))->create([
-                'client_id' => $clientId
+            ->each(fn ($clientId) => Deal::factory(rand(1, 15))->create([
+                'client_id' => $clientId,
             ]));
     }
 }

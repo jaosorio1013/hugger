@@ -36,9 +36,15 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Livewire\Component as Livewire;
+use Livewire\Components;
 
 class DealResource extends Resource
 {
+    public function bar()
+    {
+        return 'asdasd';
+    }
+
     use UpdateTotalsOnDeals;
 
     protected static ?string $model = Deal::class;
@@ -90,7 +96,7 @@ class DealResource extends Resource
                         ->modalDescription('Todos los artículos existentes se eliminarán del pedido.')
                         ->requiresConfirmation()
                         ->color('danger')
-                        ->action(fn(Set $set) => $set('details', [])),
+                        ->action(fn (Set $set) => $set('details', [])),
                 ])
                 ->schema([
                     static::getDealProducts()
@@ -138,7 +144,7 @@ class DealResource extends Resource
 
                 TextInput::make('quantity')
                     ->afterStateUpdated(
-                        fn(Get $get, $livewire, Set $set) => $set('total', $get('price') * $get('quantity'))
+                        fn (Get $get, $livewire, Set $set) => $set('total', $get('price') * $get('quantity'))
                     )
                     ->numeric()
                     ->minValue(1)
@@ -150,7 +156,7 @@ class DealResource extends Resource
                     ->prefix('$')
                     ->suffix('COP')
                     ->afterStateUpdated(
-                        fn(Get $get, $livewire, Set $set) => $set('total', $get('price') * $get('quantity'))
+                        fn (Get $get, $livewire, Set $set) => $set('total', $get('price') * $get('quantity'))
                     )
                     ->minValue(0)
                     ->required()
@@ -168,8 +174,8 @@ class DealResource extends Resource
                 self::updateTotals($get, $livewire);
             })
             ->deleteAction(
-                fn(Action $action) => $action->after(
-                    fn(Get $get, $livewire) => self::updateTotals($get, $livewire)
+                fn (Action $action) => $action->after(
+                    fn (Get $get, $livewire) => self::updateTotals($get, $livewire)
                 ),
             )
             ->required();
@@ -186,7 +192,7 @@ class DealResource extends Resource
             return;
         }
 
-        $selectedProducts = collect($products)->filter(fn($item) => !empty($item['product_id']) && !empty($item['quantity']));
+        $selectedProducts = collect($products)->filter(fn ($item) => !empty($item['product_id']) && !empty($item['quantity']));
 
         $prices = collect($products)->pluck('price', 'product_id');
 
@@ -206,7 +212,7 @@ class DealResource extends Resource
                 RestoreAction::make(),
                 ForceDeleteAction::make(),
             ])
-            ->recordUrl(fn($record) => Pages\EditDeal::getUrl([$record]))
+            ->recordUrl(fn ($record) => Pages\EditDeal::getUrl([$record]))
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),

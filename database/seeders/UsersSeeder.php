@@ -14,6 +14,7 @@ class UsersSeeder extends Seeder
                 'name' => 'Example',
                 'email' => 'test@example.com',
                 'is_admin' => true,
+                'show_on_charts' => false,
             ]);
         }
 
@@ -21,6 +22,7 @@ class UsersSeeder extends Seeder
             'name' => 'Jhonatan',
             'email' => 'jaosorio1013@gmail.com',
             'is_admin' => true,
+            'show_on_charts' => false,
         ]);
 
         $users = ['abundancia', 'alegria', 'hope'];

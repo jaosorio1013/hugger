@@ -10,17 +10,13 @@ class ClientContactsSeeder extends Seeder
 {
     public function run(): void
     {
-        $clients = Client::all();
-        foreach ($clients as $client) {
-            if ($client->type === Client::TYPE_NATURAL) {
-                continue;
-            }
-
-            $quantity = random_int(1, 10);
-
-            ClientContact::factory($quantity)->create([
-                'client_id' => $client->id,
-            ]);
-        }
+        Client::query()
+            ->where('type', Client::TYPE_NATURAL)
+            ->get(['id'])
+            ->each(function (Client $client) {
+                ClientContact::factory(rand(1, 5))->create([
+                    'client_id' => $client->id,
+                ]);
+            });
     }
 }

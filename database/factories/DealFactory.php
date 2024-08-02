@@ -19,6 +19,7 @@ class DealFactory extends Factory
         return $this->afterCreating(function (Deal $deal) {
             DealDetail::factory(random_int(1, 5))->create([
                 'deal_id' => $deal->id,
+                'client_id' => $deal->client_id,
             ]);
         });
     }
@@ -34,7 +35,7 @@ class DealFactory extends Factory
             'total' => $this->faker->randomFloat(),
 
             'client_id' => Client::factory(),
-            'client_contact_id' => ClientContact::factory(),
+            // 'client_contact_id' => ClientContact::factory(),
             'owner_id' => User::inRandomOrder()->value('id'),
         ];
     }

@@ -20,15 +20,5 @@ class DatabaseSeeder extends Seeder
             $this->call(DealsSeeder::class);
             $this->call(ClientActionsSeeder::class);
         }
-
-        // $client = Client::factory()->create([
-        //     'name' => 'Jhonatan',
-        //     'type' => Client::TYPE_NATURAL,
-        //     'email' => 'ja.osorio1013@gmail.com',
-        // ]);
-        //
-        // $client->tags()->create([
-        //     'name' => 'TEST1',
-        // ]);
     }
 }

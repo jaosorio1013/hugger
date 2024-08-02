@@ -2,10 +2,18 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\Client;
+use App\Models\CrmFont;
+use Carbon\Carbon;
 use Filament\Widgets\ChartWidget;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class ContactMeansChart extends ChartWidget
 {
+    use ChartsTrait;
+
     protected static ?string $heading = 'Medios de Contacto';
     protected static ?int $sort = 6;
     protected static ?array $options = [
@@ -21,46 +29,46 @@ class ContactMeansChart extends ChartWidget
 
     protected function getData(): array
     {
-        return [
-            'datasets' => [
-                [
-                    'label' => 'TELÉFONO',
-                    'data' => [4, 3, 7, 4, 5],
-                    'borderColor' => config('hugger.colors')[0],
-                    'backgroundColor' => config('hugger.colors')[0],
-                    'borderRadius' => 5,
-                ],
-                [
-                    'label' => 'WHATSAPP',
-                    'data' => [2, 1, 5, 3, 3],
-                    'borderColor' => config('hugger.colors')[1],
-                    'backgroundColor' => config('hugger.colors')[1],
-                    'borderRadius' => 5,
-                ],
-                [
-                    'label' => 'CORREO',
-                    'data' => [3, 2, 3, 4, 1],
-                    'borderColor' => config('hugger.colors')[2],
-                    'backgroundColor' => config('hugger.colors')[2],
-                    'borderRadius' => 5,
-                ],
-                [
-                    'label' => 'FORMULARIO PÁGINA WEB',
-                    'data' => [4, 5, 3, 1, 5],
-                    'borderColor' => config('hugger.colors')[3],
-                    'backgroundColor' => config('hugger.colors')[3],
-                    'borderRadius' => 5,
-                ],
-                [
-                    'label' => 'REDES',
-                    'data' => [1, 5, 3, 7, 5],
-                    'borderColor' => config('hugger.colors')[4],
-                    'backgroundColor' => config('hugger.colors')[4],
-                    'borderRadius' => 5,
-                ],
-            ],
-            'labels' => ['2004-1', '2004-2', '2004-3', '2004-4', '2004-5'],
-        ];
+        $data = $this->getBaseChartStructure();
+        $clientsByContactMeans = $this->getClientsByContactMean();
+
+        foreach ($this->getContactMeans() as $contactMeanId => $contactMeanName) {
+            $dataSet = $this->getDataSetStructure($contactMeanName);
+
+            foreach ($this->months as $month) {
+                $dataSet['data'][] = $clientsByContactMeans[$contactMeanId][$month]['count'] ?? 0;
+            }
+
+            $data['datasets'][] = $dataSet;
+            unset($clientsByContactMeans[$contactMeanId]);
+        }
+
+        return $data;
+    }
+
+    private function getContactMeans()
+    {
+        return Cache::rememberForever('crm_fonts', function () {
+            return CrmFont::pluck('name', 'id');
+        });
+    }
+
+    private function getClientsByContactMean()
+    {
+        return Cache::rememberForever('getClientsByOwnerAndContactMean', function () {
+            return Client::query()
+                ->where('created_at', '>=', Carbon::now()->subMonths(self::CHART_MONTHS))
+                ->groupBy('date_mont', 'crm_font_id')
+                ->get([
+                    'crm_font_id',
+                    DB::raw('COUNT(id) AS count'),
+                    DB::raw("DATE_FORMAT(created_at, '%Y-%m') AS date_mont")
+                ])
+                ->groupBy('crm_font_id')
+                ->map(function (Collection $clientsOfOwner) {
+                    return $clientsOfOwner->keyBy('date_mont')->toArray();
+                });
+        });
     }
 
     protected function getType(): string

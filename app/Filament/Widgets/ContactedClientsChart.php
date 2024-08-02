@@ -2,10 +2,18 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\Client;
+use App\Models\ClientAction;
+use Carbon\Carbon;
 use Filament\Widgets\ChartWidget;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class ContactedClientsChart extends ChartWidget
 {
+    use ChartsTrait;
+
     protected static ?string $heading = 'Clientes Contactados';
     protected static ?int $sort = 4;
     protected static ?array $options = [
@@ -21,32 +29,39 @@ class ContactedClientsChart extends ChartWidget
 
     protected function getData(): array
     {
-        return [
-            'datasets' => [
-                [
-                    'label' => 'Abundancia',
-                    'data' => [3, 2, 3, 3, 1],
-                    'borderColor' => config('hugger.colors')[0],
-                    'backgroundColor' => config('hugger.colors')[0],
-                    'borderRadius' => 5,
-                ],
-                [
-                    'label' => 'Alegria',
-                    'data' => [2, 1, 1, 3, 3],
-                    'borderColor' => config('hugger.colors')[1],
-                    'backgroundColor' => config('hugger.colors')[1],
-                    'borderRadius' => 5,
-                ],
-                [
-                    'label' => 'Hope',
-                    'data' => [1, 2, 3, 1, 1],
-                    'borderColor' => config('hugger.colors')[2],
-                    'backgroundColor' => config('hugger.colors')[2],
-                    'borderRadius' => 5,
-                ],
-            ],
-            'labels' => ['2004-1', '2004-2', '2004-3', '2004-4', '2004-5'],
-        ];
+        $data = $this->getBaseChartStructure();
+        $clientsContacted = $this->getClientsContacted();
+
+        foreach ($this->getUsersById() as $ownerId => $ownerName) {
+            $dataSet = $this->getDataSetStructure($ownerName);
+
+            foreach ($this->months as $month) {
+                $dataSet['data'][] = $clientsContacted[$ownerId][$month]['count'] ?? 0;
+            }
+
+            $data['datasets'][] = $dataSet;
+            unset($clientsContacted[$ownerId]);
+        }
+
+        return $data;
+    }
+
+    private function getClientsContacted()
+    {
+        // return Cache::rememberForever('getClientsContacted', function () {
+            return ClientAction::query()
+                ->where('created_at', '>=', Carbon::now()->subMonths(self::CHART_MONTHS))
+                ->groupBy('date_mont', 'user_id')
+                ->get([
+                    'user_id',
+                    DB::raw('COUNT(id) AS count'),
+                    DB::raw("DATE_FORMAT(created_at, '%Y-%m') AS date_mont")
+                ])
+                ->groupBy('user_id')
+                ->map(function (Collection $clientsContactedByUser) {
+                    return $clientsContactedByUser->keyBy('date_mont')->toArray();
+                });
+        // });
     }
 
     protected function getType(): string

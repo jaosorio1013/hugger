@@ -9,6 +9,7 @@ return new class extends Migration {
     {
         Schema::create('client_actions', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained();
             $table->foreignId('client_id')->constrained();
             $table->foreignId('crm_action_id')->constrained();
             $table->foreignId('crm_action_state_id')->constrained();

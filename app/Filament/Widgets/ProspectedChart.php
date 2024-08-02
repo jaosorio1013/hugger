@@ -6,6 +6,8 @@ use Filament\Widgets\ChartWidget;
 
 class ProspectedChart extends ChartWidget
 {
+    use ChartsTrait;
+
     protected static ?string $heading = 'Prospectado';
     protected static ?int $sort = 5;
     protected static ?array $options = [
@@ -18,6 +20,11 @@ class ProspectedChart extends ChartWidget
             ],
         ],
     ];
+
+    public static function canView(): bool
+    {
+        return false;
+    }
 
     protected function getData(): array
     {

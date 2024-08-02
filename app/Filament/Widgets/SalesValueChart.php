@@ -6,6 +6,8 @@ use Filament\Widgets\ChartWidget;
 
 class SalesValueChart extends ChartWidget
 {
+    use ChartsTrait;
+
     protected static ?string $heading = 'Valor Ventas';
     protected static ?int $sort = 2;
     protected static ?array $options = [
@@ -21,32 +23,22 @@ class SalesValueChart extends ChartWidget
 
     protected function getData(): array
     {
-        return [
-            'datasets' => [
-                [
-                    'label' => 'Abundancia',
-                    'data' => [300000, 200000, 300000, 50000, 1000000],
-                    'borderColor' => config('hugger.colors')[0],
-                    'backgroundColor' => config('hugger.colors')[0],
-                    'borderRadius' => 5,
-                ],
-                [
-                    'label' => 'Alegria',
-                    'data' => [200000, 100000, 100000, 50000, 3000000],
-                    'borderColor' => config('hugger.colors')[1],
-                    'backgroundColor' => config('hugger.colors')[1],
-                    'borderRadius' => 5,
-                ],
-                [
-                    'label' => 'Hope',
-                    'data' => [100000, 200000, 300000, 150000, 1000000],
-                    'borderColor' => config('hugger.colors')[2],
-                    'backgroundColor' => config('hugger.colors')[2],
-                    'borderRadius' => 5,
-                ],
-            ],
-            'labels' => ['2004-1', '2004-2', '2004-3', '2004-4', '2004-5'],
-        ];
+        $data = $this->getBaseChartStructure();
+        $dealsByOwner = $this->getDealsByOwner();
+
+        foreach ($this->getUsersById() as $ownerId => $ownerName) {
+            $ownerDeals = $dealsByOwner[$ownerId] ?? [];
+            $ownerDataSet = $this->getDataSetStructure($ownerName);
+
+            foreach ($this->months as $month) {
+                $ownerDataSet['data'][] = $ownerDeals[$month]['total_on_deals'] ?? 0;
+            }
+
+            $data['datasets'][] = $ownerDataSet;
+            unset($dealsByOwner[$ownerId]);
+        }
+
+        return $data;
     }
 
     protected function getType(): string

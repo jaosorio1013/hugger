@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -16,11 +17,28 @@ class ClientAction extends Model
     use LogsActivity;
 
     protected $fillable = [
+        'user_id',
         'client_id',
         'crm_action_id',
         'crm_action_state_id',
         'notes',
     ];
+
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        self::creating(function (ClientAction $clientAction) {
+            if (Auth::check()) {
+                $clientAction->user_id = Auth::id();
+            }
+        });
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function client(): BelongsTo
     {

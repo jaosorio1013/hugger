@@ -11,18 +11,17 @@ use Illuminate\Support\Facades\DB;
 
 trait ChartsTrait
 {
+    private array $months;
     private int $iteration = 0;
     private const CHART_MONTHS = 5;
 
-    private function getMonthsOnChart(): array
+    private function getMonthsOnChart()
     {
         return Cache::remember('months_on_chart', 86400, function () {
-            $dates = [];
+            $this->months = [];
             for ($monthsToRemove = self::CHART_MONTHS; $monthsToRemove > 0; $monthsToRemove--) {
-                $dates[] = Carbon::now()->subMonths($monthsToRemove)->format('Y-m');
+                $this->months[] = Carbon::now()->subMonths($monthsToRemove)->format('Y-m');
             }
-
-            return $dates;
         });
     }
 
@@ -54,22 +53,25 @@ trait ChartsTrait
 
     private function getBaseChartStructure(): array
     {
+        $this->getMonthsOnChart();
+
         return [
             'datasets' => [],
-            'labels' => $this->getMonthsOnChart(),
+            'labels' => $this->months,
         ];
     }
 
     private function getDataSetStructure(string $label): array
     {
-        $iteration = $this->iteration++;
+        $iteration = $this->iteration;
+        $this->iteration++;
 
         return [
-            'label' => $label,
             'data' => [],
+            'label' => $label,
+            'borderRadius' => 5,
             'borderColor' => config('hugger.colors')[$iteration],
             'backgroundColor' => config('hugger.colors')[$iteration],
-            'borderRadius' => 5,
         ];
     }
 }

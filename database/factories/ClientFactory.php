@@ -26,7 +26,7 @@ class ClientFactory extends Factory
         $type = $this->faker->randomElement([Client::TYPE_NATURAL, Client::TYPE_COMPANY, Client::TYPE_ALLIED]);
 
         return [
-            'created_at' => Carbon::now(),
+            'created_at' => Carbon::now()->subDays(rand(1, 350)),
             'updated_at' => Carbon::now(),
             'name' => $this->faker->name(),
             'email' =>  $type === Client::TYPE_NATURAL ? $this->faker->safeEmail() : null,

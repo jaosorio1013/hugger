@@ -11,6 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->string('name')->index();
             $table->string('email')->nullable();
+            $table->string('mailchimp_id')->nullable();
             $table->string('charge')->index()->nullable();
             $table->string('phone')->nullable();
             $table->foreignId('client_id')->nullable();

@@ -15,5 +15,6 @@ class ClientsSeeder extends Seeder
             $client->tags()->attach($tags->random(rand(1, 4)));
         });
 
+
     }
 }

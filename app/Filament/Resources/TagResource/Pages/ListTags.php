@@ -4,6 +4,8 @@ namespace App\Filament\Resources\TagResource\Pages;
 
 use App\Filament\Resources\TagResource;
 use App\Models\Client;
+use App\Models\ClientContact;
+use App\Models\ClientTag;
 use App\Models\Tag;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
@@ -14,6 +16,7 @@ use MailchimpMarketing\ApiClient;
 use pxlrbt\FilamentExcel\Actions\Pages\ExportAction;
 use pxlrbt\FilamentExcel\Columns\Column;
 use pxlrbt\FilamentExcel\Exports\ExcelExport;
+use Ramsey\Collection\Collection;
 
 class ListTags extends ListRecords
 {
@@ -28,9 +31,13 @@ class ListTags extends ListRecords
 
                     $this->updateMailchimpData($mailchimp);
 
-                    $this->updateClientMailchimpId($mailchimp);
-
-                    $this->updateMemberTags($mailchimp);
+                    // $model = new Client();
+                    // $this->updateUsersMailchimpId($mailchimp, $model);
+                    //
+                    // $model = new ClientContact();
+                    // $this->updateUsersMailchimpId($mailchimp, $model);
+                    //
+                    // $this->updateMemberTags($mailchimp);
                 }),
 
             ExportAction::make()->exports([
@@ -51,17 +58,31 @@ class ListTags extends ListRecords
         ];
     }
 
-    private function updateMemberTags(ApiClient $mailchimp): void
+    private function getClientTagsForMailchimp(): \Illuminate\Database\Eloquent\Collection|\LaravelIdea\Helper\App\Models\_IH_Client_C|array
     {
-        $clients = Client::query()
-            ->whereNotNull('mailchimp_id')
+        return Client::query()
             ->whereHas('tags', function ($query) {
                 $query->whereNotNull('mailchimp_id')->where('registered_on_mailchimp', false);
             })
             ->with(['tags' => function ($query) {
                 $query->whereNotNull('mailchimp_id')->wherePivot('registered_on_mailchimp', false);
             }])
-            ->get(['id', 'mailchimp_id']);
+            ->get(['id', 'mailchimp_id', 'type']);
+    }
+
+    private function updateContactRegisteredOnMailchimpForTag(int $contactId, Collection $tagsIds, ClientTag $model)
+    {
+        $model
+            ->where('client_id', $contactId)
+            ->whereIn('tag_id', $tagsIds)
+            ->update([
+                'registered_on_mailchimp' => true,
+            ]);
+    }
+
+    private function updateMemberTags(ApiClient $mailchimp): void
+    {
+        $clients = $this->getClientTagsForMailchimp();
 
         foreach ($clients as $client) {
             foreach ($client->tags as $tag) {
@@ -95,22 +116,24 @@ class ListTags extends ListRecords
         );
     }
 
-    private function updateClientMailchimpId(ApiClient $mailchimp): void
+    private function updateUsersMailchimpId(ApiClient $mailchimp, ClientContact|Client $model): void
     {
-        $clients = Client::whereNotNull('email')->whereNull('mailchimp_id')->pluck('email', 'id');
-        foreach ($clients as $clientId => $clientEmail) {
-            $mailchimpUser = $mailchimp->searchMembers->search($clientEmail);
+        $contacts = $model->whereNotNull('email')
+            ->whereNull('mailchimp_id')
+            ->pluck('email', 'id');
+        foreach ($contacts as $id => $email) {
+            $mailchimpUser = $mailchimp->searchMembers->search($email);
             if ($mailchimpUser->exact_matches->total_items === 0) {
-                $mailchimpUser = $this->addListMember($mailchimp, $clientEmail);
+                $mailchimpUser = $this->addListMember($mailchimp, $email);
 
-                Client::where('id', $clientId)->update([
+                $model->where('id', $id)->update([
                     'mailchimp_id' => $mailchimpUser->id
                 ]);
 
                 continue;
             }
 
-            Client::where('id', $clientId)->update([
+            $model->where('id', $id)->update([
                 'mailchimp_id' => $mailchimpUser->exact_matches->members[0]->id
             ]);
         }

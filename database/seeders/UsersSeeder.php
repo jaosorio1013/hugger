@@ -25,13 +25,16 @@ class UsersSeeder extends Seeder
             'show_on_charts' => false,
         ]);
 
-        $users = ['abundancia', 'alegria', 'hope'];
+        $users = [
+            'Viviana Otalvaro' => 'alegria@huggerisland.org',
+            'Santiago Otalvaro' => 'santiago.otalvaro@gmail.com',
+            'Comercial Hugger' => 'valentia@huggerisland.org',
+        ];
 
-        foreach ($users as $user) {
+        foreach ($users as $name => $email) {
             User::factory()->create([
-                'name' => $user,
-                'email' => $user . '@huggerisland.org',
-                'password' => bcrypt($user),
+                'name' => $name,
+                'email' => $email,
             ]);
         }
     }

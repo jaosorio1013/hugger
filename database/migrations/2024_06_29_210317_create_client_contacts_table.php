@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::create('client_contacts', function (Blueprint $table) {
@@ -14,9 +15,9 @@ return new class extends Migration {
             $table->string('mailchimp_id')->nullable();
             $table->string('charge')->index()->nullable();
             $table->string('phone')->nullable();
-            $table->foreignId('client_id')->nullable();
-            $table->foreignId('crm_font_id')->nullable();
-            $table->foreignId('crm_mean_id')->nullable();
+            $table->foreignId('client_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('crm_font_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('crm_mean_id')->nullable()->constrained()->nullOnDelete();
             $table->softDeletes();
             $table->timestamps();
         });

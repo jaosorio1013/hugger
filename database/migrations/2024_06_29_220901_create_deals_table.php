@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::create('deals', function (Blueprint $table) {
@@ -13,10 +14,10 @@ return new class extends Migration {
             $table->string('client_name')->nullable();
             $table->dateTime('date')->nullable();
             $table->decimal('total', 20)->nullable();
-            $table->foreignId('client_id')->nullable();
-            $table->foreignId('client_contact_id')->nullable();
+            $table->foreignId('client_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('client_contact_id')->nullable()->constrained()->nullOnDelete();
 
-            $table->foreignId('owner_id')->nullable();
+            $table->foreignId('owner_id')->nullable()->constrained('users')->nullOnDelete();
 
             $table->softDeletes();
             $table->timestamps();

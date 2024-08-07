@@ -10,6 +10,7 @@ use App\Filament\Resources\ClientResource\Pages\Filters\ClientDataFilter;
 use App\Filament\Resources\ClientResource\Pages\Filters\ClientDealsDataFilter;
 use App\Filament\Resources\ClientResource\Pages\Filters\ClientProductsBoughtDataFilter;
 use App\Filament\Resources\ClientResource\RelationManagers\ClientActionsRelationManager;
+use App\Filament\Resources\DealResource\Pages\ImportClients;
 use App\Models\Client;
 use App\Models\User;
 use Filament\Actions\CreateAction;
@@ -21,6 +22,7 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ForceDeleteAction;
@@ -51,6 +53,8 @@ class ListClients extends ListRecords
     {
         return [
             CreateAction::make(),
+
+            ImportClients::action(),
 
             ExportAction::make()->exports([ClientExporter::make()]),
         ];
@@ -99,7 +103,7 @@ class ListClients extends ListRecords
                                         ->prepend('Sin responsable', null)
                                 )
                         ])
-                        ->action(fn(array $data, Collection $records) => $records->each->update($data)),
+                        ->action(fn (array $data, Collection $records) => $records->each->update($data)),
                     DeleteBulkAction::make(),
                     RestoreBulkAction::make(),
                     ForceDeleteBulkAction::make(),
@@ -112,7 +116,7 @@ class ListClients extends ListRecords
         return [
             IconColumn::make('type')
                 ->label('Tipo')
-                ->icon(fn($state): string => match ($state) {
+                ->icon(fn ($state): string => match ($state) {
                     Client::TYPE_COMPANY => 'heroicon-o-building-office',
                     Client::TYPE_ALLIED => 'heroicon-o-hand-thumb-up',
                     Client::TYPE_NATURAL => 'heroicon-o-user',
@@ -122,7 +126,7 @@ class ListClients extends ListRecords
 
             TextColumn::make('name')
                 ->label('Nombre')
-                ->description(fn(Client $client): HtmlString => new HtmlString(
+                ->description(fn (Client $client): HtmlString => new HtmlString(
                     $client->user?->name ?? '<i style="color: #fc8d8d; ">Sin responsable</i>'
                 ))
                 ->sortable(),
@@ -131,7 +135,7 @@ class ListClients extends ListRecords
 
             TextColumn::make('nit')
                 ->label('Datos')
-                ->formatStateUsing(fn(Client $client): View => view(
+                ->formatStateUsing(fn (Client $client): View => view(
                     'tables.columns.client-general-data',
                     ['client' => $client]
                 )),
@@ -179,13 +183,13 @@ class ListClients extends ListRecords
                         ])
                         ->striped(),
                 ])
-                ->hidden(fn($record) => $record->contacts->isEmpty())
+                ->hidden(fn ($record) => $record->contacts->isEmpty())
                 ->icon('heroicon-o-users')
                 ->color('info')
                 ->label(''),
 
             EditAction::make()->label(''),
-            // DeleteAction::make()->label(''),
+            DeleteAction::make()->label(''),
             RestoreAction::make(),
             ForceDeleteAction::make(),
         ];

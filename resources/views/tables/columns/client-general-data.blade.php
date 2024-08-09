@@ -1,7 +1,9 @@
-<div>
-    <i class="fa-solid fa-location-dot pr-2 text-gray-400"></i>
-    {{ $client->address }}
-</div>
+@if($client->address !== null)
+    <div>
+        <i class="fa-solid fa-location-dot pr-2 text-gray-400"></i>
+        {{ $client->address }}
+    </div>
+@endif
 
 @if($client->location_city_id !== null)
     <div>
@@ -17,14 +19,14 @@
     </div>
 @endif
 
-@if($client->email !== null)
+@if($client->phone !== null)
     <div>
         <i class="fa-solid fa-phone pr-2 text-gray-400"></i>
         {{ $client->phone }}
     </div>
 @endif
 
-@if($client->email !== null)
+@if($client->nit !== null)
     <div>
         <i class="fa-solid fa-address-card pr-2 text-gray-400"></i>
         {{ $client->nit }}

@@ -1,137 +1,133 @@
 <?php
 
-namespace App\Filament\Resources\DealResource\Pages;
+namespace App\Filament\Resources\ClientResource\Pages;
 
 use App\Models\Client;
+use App\Models\CrmFont;
+use App\Models\CrmMean;
 use App\Models\Deal;
-use App\Models\DealDetail;
-use App\Models\Product;
-use Illuminate\Support\Facades\Cache;
 use Jaosorio1013\FilamentImport\Actions\ImportAction;
 use Jaosorio1013\FilamentImport\Actions\ImportField;
 
-class ImportClients
+trait ImportClients
 {
-    public static function action()
+    private $client;
+
+    public function importClientAction()
     {
         return ImportAction::make('Importar')
             ->icon('heroicon-s-document-arrow-up')
             ->massCreate(false)
             ->fields([
-                ImportField::make('name')
-                    ->label('Nombre')
-                    ->rules('required', ['Nombre Requerido'])
+                ImportField::make('Nombre')
+                    // ->rules(['required'], ['Nombre Requerido'])
                     ->required(),
 
-                ImportField::make('nit')->label('Identificación'),
+                ImportField::make('Identificación'),
 
-                ImportField::make('phone')->label('Teléfono'),
+                ImportField::make('Teléfono'),
 
-                ImportField::make('email')->rules('email'),
+                ImportField::make('Email')->rules('email'),
 
-                ImportField::make('font')->label('Fuente de contacto')
+                ImportField::make('Fuente')
+                    ->helperText('(' . CrmFont::pluck('name')->implode(', ') . ')')
                     ->rules(['exists:crm_fonts,name']),
 
-                ImportField::make('mean')->label('Medio de contacto')
+                ImportField::make('Medio')
+                    ->helperText('(' . CrmMean::pluck('name')->implode(', ') . ')')
                     ->rules(['exists:crm_means,name']),
 
-                ImportField::make('type')
+                ImportField::make('Tipo')
+                    ->helperText('(Natural, Empresa, Aliado)')
                     ->rules('in:Natural,Empresa,Aliado'),
+
+                ImportField::make('Nombres Contactos Cliente'),
+                ImportField::make('Teléfonos Contactos Cliente'),
+                ImportField::make('Emails Contactos Cliente')->rules('email'),
+                ImportField::make('Cargos Contactos Cliente'),
+
             ], columns: 2)
             ->handleRecordCreation(
-                fn (array $data) => self::createDealDetail($data)
+                function (array $data): Client {
+                    $this->createClient($data);
 
-                // function (array $data) {
-                //     ImportDealsJob::dispatch($data);
-                //
-                //     return new Deal();
-                // }
+                    $this->createClientContact($data);
+
+                    return new Client();
+                }
             )
             ->after(
-                fn (Deal $deal) => redirect(ListDeals::getUrl())
+                fn(Deal $deal) => redirect(ListClients::getUrl())
             );
     }
 
-    private static function createDealDetail(array $data)
+    private function createClient(array $data): void
     {
-        $data = self::transformData($data);
-        $deal = self::deal($data);
+        $nit = $data['Identificación'] ?? null;
+        if (null === $nit) {
+            return;
+        }
 
-        $detail = DealDetail::firstOrCreate([
-            'deal_id' => $deal->id,
-            'client_id' => $deal->client_id,
-            'product_id' => self::product($data)->id ?? null,
+        $client = Client::where('nit', $nit)->first();
+        if ($client) {
+            return;
+        }
+
+        $this->client = Client::create([
+            'nit' => $nit,
+            'name' => $data['Nombre'],
+            'phone' => $data['Teléfono'] ?? null,
+            'email' => $data['Email'] ?? null,
+            'crm_font_id' => $this->getMean($data['Fuente'] ?? null),
+            'crm_mean_id' => $this->getFont($data['Medio'] ?? null),
+            'type' => $this->getClientType(
+                $data['Tipo'] ?? null
+            ),
+        ]);
+    }
+
+    private function getMean(string $mean = null)
+    {
+        return CrmMean::where('name', $mean)->value('id') ?? null;
+    }
+
+    private function getFont(string $font = null)
+    {
+        return CrmFont::where('name', $font)->value('id') ?? null;
+    }
+
+    private function getClientType(string $type = null): int
+    {
+        $type = trim($type);
+        if ('Empresa' === $type) {
+            return Client::TYPE_COMPANY;
+        }
+
+        if ('Aliado' === $type) {
+            return Client::TYPE_ALLIED;
+        }
+
+        return Client::TYPE_NATURAL;
+    }
+
+    private function createClientContact(array $data): void
+    {
+        if (empty($data['Nombres Contactos Cliente'])) {
+            return;
+        }
+
+        $contact = $this->client->contacts()->firstOrCreate([
+            'name' => $data['Nombres Contactos Cliente'],
         ]);
 
-        $detail->update([
-            'quantity' => $data['Cantidad'],
-            'price' => $data['Valor Unitario'],
-            'total' => $data['Valor Unitario'] * $data['Cantidad'],
+        if (!$contact->wasRecentlyCreated) {
+            return;
+        }
+
+        $contact->update([
+            'phone' => $data['Teléfonos Contactos Cliente'] ?? null,
+            'email' => $data['Emails Contactos Cliente'] ?? null,
+            'charge' => $data['Cargos Contactos Cliente'] ?? null,
         ]);
-
-        return $detail;
-    }
-
-    private static function product(array $data)
-    {
-        return Cache::rememberForever('product-' . $data['Ítem'], function () use ($data) {
-            $product = Product::firstOrCreate([
-                'name' => $data['Ítem'],
-            ]);
-            if ($product->wasRecentlyCreated) {
-                $product->update([
-                    'price' => $data['Valor Unitario'],
-                ]);
-            }
-
-            return $product;
-        });
-    }
-
-    private static function deal(array $data)
-    {
-        return Cache::rememberForever('deal-' . $data['code'], function () use ($data) {
-            $deal = Deal::firstOrCreate([
-                'code' => $data['code'],
-            ]);
-            if ($deal->wasRecentlyCreated) {
-                $deal->update([
-                    'client_id' => self::client($data)->id,
-                    'date' => $data['Fecha'],
-                ]);
-            }
-
-            return $deal;
-        });
-    }
-
-    private static function client(array $data)
-    {
-        return Cache::rememberForever('client-' . $data['Cliente'], function () use ($data) {
-            $client = Client::firstOrCreate([
-                'name' => $data['Cliente'],
-            ]);
-
-            if ($client->wasRecentlyCreated) {
-                $client->update([
-                    'type' => Client::TYPE_COMPANY,
-                ]);
-            }
-
-            return $client;
-        });
-    }
-
-    private static function transformData(array $data): array
-    {
-        $excel_date_cell = $data['Fecha'];
-        $UNIX_DATE_FORMAT = ($excel_date_cell - 25569) * 86400;
-        $data['Fecha'] = gmdate("Y-m-d", $UNIX_DATE_FORMAT);
-
-        // $data['Valor Unitario'] = (float)$data['Valor Unitario'];
-
-        // unset($data['Venta Neta']);
-
-        return $data;
     }
 }

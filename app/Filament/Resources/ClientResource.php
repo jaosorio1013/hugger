@@ -83,7 +83,6 @@ class ClientResource extends Resource
         return parent::getEloquentQuery()
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
-            ])
-            ;
+            ]);
     }
 }

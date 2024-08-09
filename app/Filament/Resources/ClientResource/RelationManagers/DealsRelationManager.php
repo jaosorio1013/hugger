@@ -29,7 +29,7 @@ class DealsRelationManager extends RelationManager
         return DealResource::table($table)
             ->headerActions([
                 CreateAction::make()
-                    ->url(DealResource\Pages\CreateDeal::getUrl([
+                    ->url(\App\Filament\Resources\ClientResource\Pages\CreateDeal::getUrl([
                         'client_id' => 1
                     ]))
                     ->openUrlInNewTab()

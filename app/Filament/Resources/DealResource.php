@@ -2,7 +2,10 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\DealResource\Pages;
+use App\Filament\Resources\ClientResource\Pages;
+use App\Filament\Resources\DealResource\Pages\CreateDeal;
+use App\Filament\Resources\DealResource\Pages\EditDeal;
+use App\Filament\Resources\DealResource\Pages\ListDeals;
 use App\Filament\Resources\DealResource\UpdateTotalsOnDeals;
 use App\Models\Deal;
 use App\Models\Product;
@@ -36,7 +39,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Livewire\Component as Livewire;
-use Livewire\Components;
 
 class DealResource extends Resource
 {
@@ -212,7 +214,7 @@ class DealResource extends Resource
                 RestoreAction::make(),
                 ForceDeleteAction::make(),
             ])
-            ->recordUrl(fn ($record) => Pages\EditDeal::getUrl([$record]))
+            ->recordUrl(fn ($record) => EditDeal::getUrl([$record]))
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
@@ -252,9 +254,9 @@ class DealResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListDeals::route('/'),
-            'create' => Pages\CreateDeal::route('/create'),
-            'edit' => Pages\EditDeal::route('/{record}/edit'),
+            'index' => ListDeals::route('/'),
+            'create' => CreateDeal::route('/create'),
+            'edit' => EditDeal::route('/{record}/edit'),
         ];
     }
 

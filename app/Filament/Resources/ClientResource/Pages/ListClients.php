@@ -10,11 +10,9 @@ use App\Filament\Resources\ClientResource\Pages\Filters\ClientDataFilter;
 use App\Filament\Resources\ClientResource\Pages\Filters\ClientDealsDataFilter;
 use App\Filament\Resources\ClientResource\Pages\Filters\ClientProductsBoughtDataFilter;
 use App\Filament\Resources\ClientResource\RelationManagers\ClientActionsRelationManager;
-use App\Filament\Resources\DealResource\Pages\ImportClients;
 use App\Models\Client;
 use App\Models\User;
 use Filament\Actions\CreateAction;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
@@ -46,6 +44,7 @@ class ListClients extends ListRecords
     use ClientDealsDataFilter;
     use ClientProductsBoughtDataFilter;
     use ClientActionsFilter;
+    use ImportClients;
 
     protected static string $resource = ClientResource::class;
 
@@ -54,7 +53,7 @@ class ListClients extends ListRecords
         return [
             CreateAction::make(),
 
-            ImportClients::action(),
+            $this->importClientAction(),
 
             ExportAction::make()->exports([ClientExporter::make()]),
         ];
@@ -72,23 +71,6 @@ class ListClients extends ListRecords
                 $this->getProductsBoughtDataFilter(),
                 $this->getActionsFilter(),
             ], layout: FiltersLayout::AboveContentCollapsible)
-            // ->filtersFormSchema(fn(array $filters): array => [
-            //     Section::make('Datos Cliente')
-            //         ->schema([$filters['Datos Cliente']])
-            //         ->columnSpan(1),
-            //
-            //     Section::make('Datos Compra')
-            //         ->schema([$filters['Datos Compra']])
-            //         ->columnSpan(1),
-            //
-            //     Section::make('Datos Producto')
-            //         ->schema([$filters['Datos Producto']])
-            //         ->columnSpan(1),
-            //
-            //     Section::make('Acciones')
-            //         ->schema([$filters['Acciones']])
-            //         ->columnSpan(1),
-            // ])
             ->bulkActions([
                 BulkActionGroup::make([
                     BulkAction::make('Asignar responsable a clientes')
@@ -101,9 +83,9 @@ class ListClients extends ListRecords
                                 ->options(
                                     User::pluck('name', 'id')
                                         ->prepend('Sin responsable', null)
-                                )
+                                ),
                         ])
-                        ->action(fn (array $data, Collection $records) => $records->each->update($data)),
+                        ->action(fn(array $data, Collection $records) => $records->each->update($data)),
                     DeleteBulkAction::make(),
                     RestoreBulkAction::make(),
                     ForceDeleteBulkAction::make(),
@@ -116,7 +98,7 @@ class ListClients extends ListRecords
         return [
             IconColumn::make('type')
                 ->label('Tipo')
-                ->icon(fn ($state): string => match ($state) {
+                ->icon(fn($state): string => match ($state) {
                     Client::TYPE_COMPANY => 'heroicon-o-building-office',
                     Client::TYPE_ALLIED => 'heroicon-o-hand-thumb-up',
                     Client::TYPE_NATURAL => 'heroicon-o-user',
@@ -126,7 +108,7 @@ class ListClients extends ListRecords
 
             TextColumn::make('name')
                 ->label('Nombre')
-                ->description(fn (Client $client): HtmlString => new HtmlString(
+                ->description(fn(Client $client): HtmlString => new HtmlString(
                     $client->user?->name ?? '<i style="color: #fc8d8d; ">Sin responsable</i>'
                 ))
                 ->sortable(),
@@ -135,7 +117,7 @@ class ListClients extends ListRecords
 
             TextColumn::make('nit')
                 ->label('Datos')
-                ->formatStateUsing(fn (Client $client): View => view(
+                ->formatStateUsing(fn(Client $client): View => view(
                     'tables.columns.client-general-data',
                     ['client' => $client]
                 )),
@@ -183,7 +165,7 @@ class ListClients extends ListRecords
                         ])
                         ->striped(),
                 ])
-                ->hidden(fn ($record) => $record->contacts->isEmpty())
+                ->hidden(fn($record) => $record->contacts->isEmpty())
                 ->icon('heroicon-o-users')
                 ->color('info')
                 ->label(''),

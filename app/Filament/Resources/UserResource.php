@@ -8,6 +8,7 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
@@ -43,23 +44,12 @@ class UserResource extends Resource
                 TextInput::make('email')
                     ->required(),
 
-                // DatePicker::make('email_verified_at')
-                //     ->label('Email Verified Date'),
-
                 TextInput::make('password')
                     ->columnSpanFull()
                     ->required(),
 
-                Checkbox::make('is_admin')
-                ->columnSpanFull(),
-
-                // Placeholder::make('created_at')
-                //     ->label('Created Date')
-                //     ->content(fn(?User $record): string => $record?->created_at?->diffForHumans() ?? '-'),
-                //
-                // Placeholder::make('updated_at')
-                //     ->label('Last Modified Date')
-                //     ->content(fn(?User $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
+                Toggle::make('is_admin')
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -74,10 +64,6 @@ class UserResource extends Resource
                 TextColumn::make('email')
                     ->searchable()
                     ->sortable(),
-
-                // TextColumn::make('email_verified_at')
-                //     ->label('Email Verified Date')
-                //     ->date(),
 
                 ToggleColumn::make('is_admin'),
             ])

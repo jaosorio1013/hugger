@@ -44,10 +44,6 @@ class UserResource extends Resource
                 TextInput::make('email')
                     ->required(),
 
-                TextInput::make('password')
-                    ->columnSpanFull()
-                    ->required(),
-
                 Toggle::make('is_admin')
                     ->columnSpanFull(),
             ]);

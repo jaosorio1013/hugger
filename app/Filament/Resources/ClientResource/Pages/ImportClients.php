@@ -6,16 +6,19 @@ use App\Models\Client;
 use App\Models\CrmFont;
 use App\Models\CrmMean;
 use App\Models\Deal;
+use Filament\Forms\Components\Actions\Action;
 use Jaosorio1013\FilamentImport\Actions\ImportAction;
 use Jaosorio1013\FilamentImport\Actions\ImportField;
+use Filament\Tables\Actions\Action as TableAction;
 
 trait ImportClients
 {
     private $client;
 
-    public function importClientAction()
+    public function importClientAction(): ImportAction
     {
         return ImportAction::make('Importar')
+            ->exampleFile('template-clientes')
             ->icon('heroicon-s-document-arrow-up')
             ->massCreate(false)
             ->fields([

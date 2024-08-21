@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ClientResource\RelationManagers;
 
 use App\Filament\Resources\DealResource;
+use App\Filament\Resources\DealResource\Pages\CreateDeal;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Actions\CreateAction;
@@ -29,7 +30,7 @@ class DealsRelationManager extends RelationManager
         return DealResource::table($table)
             ->headerActions([
                 CreateAction::make()
-                    ->url(\App\Filament\Resources\ClientResource\Pages\CreateDeal::getUrl([
+                    ->url(CreateDeal::getUrl([
                         'client_id' => 1
                     ]))
                     ->openUrlInNewTab()

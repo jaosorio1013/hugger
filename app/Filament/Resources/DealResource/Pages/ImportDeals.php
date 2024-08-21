@@ -6,15 +6,19 @@ use App\Models\Client;
 use App\Models\Deal;
 use App\Models\DealDetail;
 use App\Models\Product;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\TextInput;
 use Illuminate\Support\Facades\Cache;
 use Jaosorio1013\FilamentImport\Actions\ImportAction;
 use Jaosorio1013\FilamentImport\Actions\ImportField;
 
 class ImportDeals
 {
-    public static function action()
+    public static function action(): ImportAction
     {
         return ImportAction::make('Importar Compras')
+            ->exampleFile('template-compras')
             ->icon('heroicon-s-document-arrow-up')
             ->massCreate(false)
             ->fields([
@@ -48,17 +52,10 @@ class ImportDeals
             ], columns: 2)
             ->handleRecordCreation(
                 fn(array $data) => self::createDealDetail($data)
-
-                // function (array $data) {
-                //     ImportDealsJob::dispatch($data);
-                //
-                //     return new Deal();
-                // }
             )
             ->after(
                 fn(Deal $deal) => redirect(ListDeals::getUrl())
-            )
-            ;
+            );
     }
 
     private static function createDealDetail(array $data): DealDetail

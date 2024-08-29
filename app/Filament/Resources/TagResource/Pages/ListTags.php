@@ -31,13 +31,13 @@ class ListTags extends ListRecords
 
                     $this->updateMailchimpData($mailchimp);
 
-                    // $model = new Client();
-                    // $this->updateUsersMailchimpId($mailchimp, $model);
-                    //
-                    // $model = new ClientContact();
-                    // $this->updateUsersMailchimpId($mailchimp, $model);
-                    //
-                    // $this->updateMemberTags($mailchimp);
+                    $model = new Client();
+                    $this->updateUsersMailchimpId($mailchimp, $model);
+
+                    $model = new ClientContact();
+                    $this->updateUsersMailchimpId($mailchimp, $model);
+
+                    $this->updateMemberTags($mailchimp);
                 }),
 
             ExportAction::make()->exports([
@@ -58,7 +58,7 @@ class ListTags extends ListRecords
         ];
     }
 
-    private function getClientTagsForMailchimp(): \Illuminate\Database\Eloquent\Collection|\LaravelIdea\Helper\App\Models\_IH_Client_C|array
+    private function getClientTagsForMailchimp(): \Illuminate\Database\Eloquent\Collection|array
     {
         return Client::query()
             ->whereHas('tags', function ($query) {

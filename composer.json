@@ -6,11 +6,8 @@
     "license": "MIT",
     "repositories": [
         {
-            "type": "path",
-            "url": "../filament-import",
-            "options": {
-                "symlink": true
-            }
+            "type": "vcs",
+            "url": "https://github.com/jaosorio1013/filament-import"
         }
     ],
     "require": {

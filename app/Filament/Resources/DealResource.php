@@ -216,11 +216,11 @@ class DealResource extends Resource
             ])
             ->recordUrl(fn ($record) => EditDeal::getUrl([$record]))
             ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                    RestoreBulkAction::make(),
-                    ForceDeleteBulkAction::make(),
-                ]),
+                // BulkActionGroup::make([
+                //     DeleteBulkAction::make(),
+                //     RestoreBulkAction::make(),
+                //     ForceDeleteBulkAction::make(),
+                // ]),
             ]);
     }
 
@@ -258,14 +258,6 @@ class DealResource extends Resource
             'create' => CreateDeal::route('/create'),
             'edit' => EditDeal::route('/{record}/edit'),
         ];
-    }
-
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
     }
 
     public static function getGlobalSearchEloquentQuery(): Builder
@@ -328,5 +320,11 @@ class DealResource extends Resource
                     ->striped()
                     ->columnSpan(2),
             ]);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->orderByDesc('date');
     }
 }

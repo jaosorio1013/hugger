@@ -118,7 +118,7 @@ class DealResource extends Resource
         ];
     }
 
-    public static function getDealProducts()
+    public static function getDealProducts(): TableRepeater
     {
         return TableRepeater::make('details')
             ->relationship()
@@ -209,11 +209,11 @@ class DealResource extends Resource
     {
         return $table
             ->columns(static::getTableColumns())
-            ->actions([
-                DeleteAction::make()->label(''),
-                RestoreAction::make(),
-                ForceDeleteAction::make(),
-            ])
+            // ->actions([
+            //     DeleteAction::make()->label(''),
+            //     RestoreAction::make(),
+            //     ForceDeleteAction::make(),
+            // ])
             ->recordUrl(fn ($record) => EditDeal::getUrl([$record]))
             ->bulkActions([
                 // BulkActionGroup::make([

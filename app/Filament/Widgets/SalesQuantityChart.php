@@ -9,6 +9,7 @@ class SalesQuantityChart extends ChartWidget
     use ChartsTrait;
 
     protected static ?string $heading = 'Cantidad Ventas';
+    protected static ?string $description = 'Cantidad de ventas realizadas en cada mes.';
     protected static ?int $sort = 1;
     protected static ?array $options = [
         'scales' => [

@@ -15,6 +15,7 @@ class ContactMeansChart extends ChartWidget
     use ChartsTrait;
 
     protected static ?string $heading = 'Medios de Contacto';
+    protected static ?string $description = 'Cantidad de clientes nuevos que nos han contactado por cada medio.';
     protected static ?int $sort = 6;
     protected static ?array $options = [
         'scales' => [

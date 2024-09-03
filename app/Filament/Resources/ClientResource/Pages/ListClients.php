@@ -48,6 +48,8 @@ class ListClients extends ListRecords
 
     protected static string $resource = ClientResource::class;
 
+    protected ?string $subheading = 'Aquí puedes ver el estado de los clientes y gestinarlos.';
+
     protected function getHeaderActions(): array
     {
         return [

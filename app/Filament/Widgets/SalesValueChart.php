@@ -9,6 +9,7 @@ class SalesValueChart extends ChartWidget
     use ChartsTrait;
 
     protected static ?string $heading = 'Valor Ventas';
+    protected static ?string $description = 'La cantidad de dinero por las ventas realizadas en cada mes.';
     protected static ?int $sort = 2;
     protected static ?array $options = [
         'scales' => [

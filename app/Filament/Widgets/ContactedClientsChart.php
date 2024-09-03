@@ -13,6 +13,7 @@ class ContactedClientsChart extends ChartWidget
     use ChartsTrait;
 
     protected static ?string $heading = 'Clientes Contactados';
+    protected static ?string $description = 'Cantidad de clientes a los que se les ha realizado algún seguimiento durante cada mes.';
     protected static ?int $sort = 4;
     protected static ?array $options = [
         'scales' => [

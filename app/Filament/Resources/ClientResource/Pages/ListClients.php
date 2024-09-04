@@ -88,9 +88,9 @@ class ListClients extends ListRecords
                                 ),
                         ])
                         ->action(fn(array $data, Collection $records) => $records->each->update($data)),
-                    DeleteBulkAction::make(),
-                    RestoreBulkAction::make(),
-                    ForceDeleteBulkAction::make(),
+                    // DeleteBulkAction::make(),
+                    // RestoreBulkAction::make(),
+                    // ForceDeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -173,9 +173,9 @@ class ListClients extends ListRecords
                 ->label(''),
 
             EditAction::make()->label(''),
-            DeleteAction::make()->label(''),
-            RestoreAction::make(),
-            ForceDeleteAction::make(),
+            // DeleteAction::make()->label(''),
+            // RestoreAction::make(),
+            // ForceDeleteAction::make(),
         ];
     }
 }

@@ -106,6 +106,10 @@ class ListTags extends ListRecords
 
     private function addListMember(ApiClient $mailchimp, string $email)
     {
+        if (preg_match('/example\./', $email) !== false) {
+            return null;
+        }
+
         return $mailchimp->lists->addListMember(
             config('hugger.MALCHIMP_LIST'),
             [
@@ -120,15 +124,17 @@ class ListTags extends ListRecords
     {
         $contacts = $model->whereNotNull('email')
             ->whereNull('mailchimp_id')
+            ->whereNotLike('email', '%@example.%')
             ->pluck('email', 'id');
         foreach ($contacts as $id => $email) {
             $mailchimpUser = $mailchimp->searchMembers->search($email);
             if ($mailchimpUser->exact_matches->total_items === 0) {
                 $mailchimpUser = $this->addListMember($mailchimp, $email);
-
-                $model->where('id', $id)->update([
-                    'mailchimp_id' => $mailchimpUser->id
-                ]);
+                if ($mailchimpUser !== null) {
+                    $model->where('id', $id)->update([
+                        'mailchimp_id' => $mailchimpUser->id
+                    ]);
+                }
 
                 continue;
             }

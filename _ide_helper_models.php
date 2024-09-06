@@ -43,7 +43,7 @@ namespace App\Models{
  * @property-read \App\Models\CrmFont|null $font
  * @property-read string $status_name
  * @property-read \App\Models\CrmMean|null $mean
- * @property-read \App\Models\CrmStatus|null $status
+ * @property-read \App\Models\CrmPipelineStage|null $status
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Tag> $tags
  * @property-read int|null $tags_count
  * @property-read \App\Models\User|null $user
@@ -56,7 +56,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Client whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Client whereCrmFontId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Client whereCrmMeanId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Client whereCrmStatusId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Client whereCrmPipelineStageId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Client whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Client whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Client whereId($value)
@@ -82,7 +82,7 @@ namespace App\Models{
  * @property int|null $user_id
  * @property int|null $client_id
  * @property int $crm_action_id
- * @property int $crm_action_state_id
+ * @property int $crm_pipeline_stage_id
  * @property string|null $notes
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -91,7 +91,7 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activities
  * @property-read int|null $activities_count
  * @property-read \App\Models\Client|null $client
- * @property-read \App\Models\CrmActionState $state
+ * @property-read \App\Models\CrmPipelineStage $state
  * @property-read \App\Models\User|null $user
  * @method static \Database\Factories\ClientActionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|ClientAction newModelQuery()
@@ -101,7 +101,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ClientAction whereClientId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ClientAction whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ClientAction whereCrmActionId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ClientAction whereCrmActionStateId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ClientAction whereCrmPipelineStageId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ClientAction whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ClientAction whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ClientAction whereNotes($value)
@@ -203,15 +203,15 @@ namespace App\Models{
  * @property string $name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @method static \Illuminate\Database\Eloquent\Builder|CrmActionState newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|CrmActionState newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|CrmActionState query()
- * @method static \Illuminate\Database\Eloquent\Builder|CrmActionState whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CrmActionState whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CrmActionState whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CrmActionState whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CrmPipelineStage newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CrmPipelineStage newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CrmPipelineStage query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CrmPipelineStage whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CrmPipelineStage whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CrmPipelineStage whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CrmPipelineStage whereUpdatedAt($value)
  */
-	class CrmActionState extends \Eloquent {}
+	class CrmPipelineStage extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -260,15 +260,15 @@ namespace App\Models{
  * @property string $name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @method static \Illuminate\Database\Eloquent\Builder|CrmStatus newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|CrmStatus newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|CrmStatus query()
- * @method static \Illuminate\Database\Eloquent\Builder|CrmStatus whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CrmStatus whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CrmStatus whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CrmStatus whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CrmPipelineStage newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CrmPipelineStage newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CrmPipelineStage query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CrmPipelineStage whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CrmPipelineStage whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CrmPipelineStage whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CrmPipelineStage whereUpdatedAt($value)
  */
-	class CrmStatus extends \Eloquent {}
+	class CrmPipelineStage extends \Eloquent {}
 }
 
 namespace App\Models{

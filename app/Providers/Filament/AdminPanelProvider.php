@@ -17,6 +17,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use JibayMcs\FilamentTour\FilamentTourPlugin;
 use Rmsramos\Activitylog\ActivitylogPlugin;
 
 class AdminPanelProvider extends PanelProvider
@@ -57,6 +58,9 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->darkMode(false)
             ->plugins([
+                FilamentTourPlugin::make()
+                    ->onlyVisibleOnce(false),
+
                 ActivitylogPlugin::make()
                     ->authorize(fn() => auth()->user()->is_admin == true)
                     ->navigationGroup('Gestión')

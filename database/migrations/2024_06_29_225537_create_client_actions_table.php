@@ -12,8 +12,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('client_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('crm_action_id')->constrained()->restrictOnDelete();
-            $table->foreignId('crm_action_state_id')->constrained()->restrictOnDelete();
+            $table->foreignId('crm_action_id')->nullable()->constrained()->restrictOnDelete();
+            $table->foreignId('crm_pipeline_stage_id')->constrained()->restrictOnDelete();
             $table->text('notes')->nullable();
             $table->softDeletes();
             $table->timestamps();

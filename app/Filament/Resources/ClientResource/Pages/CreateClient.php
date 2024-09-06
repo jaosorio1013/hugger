@@ -47,14 +47,6 @@ class CreateClient extends CreateRecord
                 ->relationship('user', 'name')
                 ->searchable(),
 
-            Select::make('crm_font_id')
-                ->label('Fuente de contacto')
-                ->relationship('font', 'name'),
-
-            Select::make('crm_mean_id')
-                ->label('Medio de contacto')
-                ->relationship('mean', 'name'),
-
             Select::make('location_city_id')
                 ->label('Ciudad')
                 ->relationship('city', 'name')
@@ -66,6 +58,20 @@ class CreateClient extends CreateRecord
                     TextInput::make('name')->required()
                 ])
                 ->multiple(),
+
+            // ------
+
+            Select::make('crm_font_id')
+                ->label('Fuente de contacto')
+                ->relationship('font', 'name'),
+
+            Select::make('crm_mean_id')
+                ->label('Medio de contacto')
+                ->relationship('mean', 'name'),
+
+            Select::make('crm_pipeline_stage_id')
+                ->label('Estado Pipeline')
+                ->relationship('stage', 'name'),
         ];
     }
 }

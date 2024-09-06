@@ -38,12 +38,44 @@ class Client extends Model
         'user_id',
         'crm_font_id',
         'crm_mean_id',
-        'crm_status_id',
+        'crm_pipeline_stage_id',
     ];
 
     protected $with = [
-        'contacts'
+        'contacts',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::creating(function (Client $client) {
+            $client->crm_pipeline_stage_id = CrmPipelineStage::where('is_default', true)->value('id');
+        });
+
+        self::created(function (Client $client) {
+            $client->actions()->create([
+                'crm_pipeline_stage_id' => $client->crm_pipeline_stage_id,
+                // 'employee_id' => $client->employee_id,
+                'user_id' => auth()->check() ? auth()->id() : null
+            ]);
+        });
+
+        self::updated(function (Client $client) {
+            $lastLog = $client->actions()
+                // ->whereNotNull('employee_id')
+                ->latest()->first();
+
+            // Here, we will check if the employee has changed, and if so - add a new log
+            if ($lastLog && $client->employee_id !== $lastLog?->employee_id) {
+                $client->actions()->create([
+                    // 'employee_id' => $client->employee_id,
+                    'notes' => is_null($client->employee_id) ? 'Employee removed' : '',
+                    'user_id' => auth()->id()
+                ]);
+            }
+        });
+    }
 
     public function user(): BelongsTo
     {
@@ -75,9 +107,9 @@ class Client extends Model
         return $this->hasMany(ClientAction::class);
     }
 
-    public function status(): BelongsTo
+    public function stage(): BelongsTo
     {
-        return $this->belongsTo(CrmStatus::class, 'crm_status_id');
+        return $this->belongsTo(CrmPipelineStage::class, 'crm_pipeline_stage_id');
     }
 
     public function deals(): HasMany

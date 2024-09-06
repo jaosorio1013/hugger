@@ -4,7 +4,7 @@ namespace App\Filament\Resources\ClientResource\Pages\Filters;
 
 use App\Models\ClientAction;
 use App\Models\CrmAction;
-use App\Models\CrmActionState;
+use App\Models\CrmPipelineStage;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,7 +14,7 @@ trait ClientActionsFilter
     private function getActionsFilter()
     {
         $actions = CrmAction::pluck('name', 'id');
-        $actionStates = CrmActionState::pluck('name', 'id');
+        $actionStates = CrmPipelineStage::pluck('name', 'id');
 
         return Filter::make('Acciones')
             ->form([
@@ -34,7 +34,7 @@ trait ClientActionsFilter
                     )
                     ->when(
                         $data['state'] ?? null,
-                        fn(Builder $query) => $query->where('crm_action_state_id', $data['state']),
+                        fn(Builder $query) => $query->where('crm_pipeline_stage_id', $data['state']),
                     )
                     ->pluck('client_id');
 

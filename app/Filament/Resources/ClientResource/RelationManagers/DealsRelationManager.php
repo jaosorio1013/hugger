@@ -4,10 +4,14 @@ namespace App\Filament\Resources\ClientResource\RelationManagers;
 
 use App\Filament\Resources\DealResource;
 use App\Filament\Resources\DealResource\Pages\CreateDeal;
+use App\Models\ClientAction;
+use App\Models\Deal;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class DealsRelationManager extends RelationManager
 {
@@ -38,5 +42,10 @@ class DealsRelationManager extends RelationManager
                     ->label('Crear compra')
                     ->modalWidth(900),
             ]);
+    }
+
+    protected function getTableQuery(): Builder|Relation|null
+    {
+        return Deal::where('client_id', $this->ownerRecord->id)->orderByDesc('date');
     }
 }

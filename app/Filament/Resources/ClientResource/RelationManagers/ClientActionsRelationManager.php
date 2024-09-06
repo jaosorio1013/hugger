@@ -2,8 +2,10 @@
 
 namespace App\Filament\Resources\ClientResource\RelationManagers;
 
+use App\Models\Client;
+use App\Models\ClientAction;
 use App\Models\CrmAction;
-use App\Models\CrmActionState;
+use App\Models\CrmPipelineStage;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
@@ -20,6 +22,7 @@ use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ClientActionsRelationManager extends RelationManager
@@ -39,15 +42,15 @@ class ClientActionsRelationManager extends RelationManager
     public function getFormSchema(): array
     {
         return [
-            Select::make('crm_action_id')
-                ->label('Acción')
-                ->options(CrmAction::pluck('name', 'id'))
+            Select::make('crm_pipeline_stage_id')
+                ->label('Estado')
+                ->options(CrmPipelineStage::pluck('name', 'id'))
                 ->preload()
                 ->required(),
 
-            Select::make('crm_action_state_id')
-                ->label('Estado')
-                ->options(CrmActionState::pluck('name', 'id'))
+            Select::make('crm_action_id')
+                ->label('Acción')
+                ->options(CrmAction::pluck('name', 'id'))
                 ->preload()
                 ->required(),
 
@@ -66,12 +69,12 @@ class ClientActionsRelationManager extends RelationManager
                     ->label('Fecha')
                     ->sortable(),
 
-                TextColumn::make('action.name')
-                    ->label('Acción')
+                TextColumn::make('stage.name')
+                    ->label('Estado')
                     ->sortable(),
 
-                TextColumn::make('state.name')
-                    ->label('Estado')
+                TextColumn::make('action.name')
+                    ->label('Acción')
                     ->sortable(),
 
                 TextColumn::make('notes')
@@ -103,5 +106,10 @@ class ClientActionsRelationManager extends RelationManager
             ->modifyQueryUsing(fn(Builder $query) => $query->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]));
+    }
+
+    protected function getTableQuery(): Builder|Relation|null
+    {
+        return ClientAction::where('client_id', $this->ownerRecord->id)->orderByDesc('updated_at');
     }
 }

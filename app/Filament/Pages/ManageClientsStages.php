@@ -29,6 +29,11 @@ class ManageClientsStages extends Page
         // Find the client and update the crm_pipeline_stage_id
         $client = Client::find($id);
         $client->crm_pipeline_stage_id = $crm_pipeline_stage_id;
+
+        if ($client->user_id === null && !auth()->user()->is_admin) {
+            $client->user_id = auth()->id();
+        }
+
         $client->save();
 
         // Don't forget to write the log
@@ -37,13 +42,6 @@ class ManageClientsStages extends Page
             'user_id' => auth()->id(),
             'notes' => null,
         ]);
-
-        // Inform the user that the status has been updated
-        Notification::make()
-            ->title('Estado actualizado')
-            ->body('Se cambio el estado de: ' . $client->name)
-            ->success()
-            ->send();
     }
 
     // Data that we will pass to our View
@@ -93,7 +91,7 @@ class ManageClientsStages extends Page
     {
         return Client::with('user:id,name')
             ->when(!auth()->user()->is_admin, function (Builder $query) {
-                $query->where('user_id', auth()->id());
+                $query->whereNull('user_id')->orWhere('user_id', auth()->id());
             })
             ->get()
             ->map(function (Client $item) {

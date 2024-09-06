@@ -19,7 +19,12 @@
                                             {{ $record['title'] }}
                                         </p>
 
-                                        <p class="text-xs italic" style="color: #aaa">{{ $record['owner'] }}</p>
+                                        <p
+                                                class="text-xs italic"
+                                                style="color: {{ $record['owner'] === null ? '#fc6459' : '#aaa' }}"
+                                        >
+                                            {{ $record['owner'] ?? 'Sin encargado' }}
+                                        </p>
 
                                     </div>
                                 @endforeach

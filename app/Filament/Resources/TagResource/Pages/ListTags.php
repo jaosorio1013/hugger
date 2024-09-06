@@ -9,6 +9,7 @@ use App\Models\ClientTag;
 use App\Models\Tag;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Excel;
@@ -21,6 +22,8 @@ use Ramsey\Collection\Collection;
 class ListTags extends ListRecords
 {
     protected static string $resource = TagResource::class;
+
+    private bool $sendNotification = false;
 
     protected function getHeaderActions(): array
     {
@@ -38,6 +41,14 @@ class ListTags extends ListRecords
                     $this->updateUsersMailchimpId($mailchimp, $model);
 
                     $this->updateMemberTags($mailchimp);
+
+                    if ($this->sendNotification) {
+                        Notification::make()
+                            ->title('Existen emails de prueba')
+                            ->body('Es posible que no visualice elementos nuevos en Maichimp, pues varios emails son de prueba y no los permite incrustar')
+                            ->info()
+                            ->send();
+                    }
                 }),
 
             ExportAction::make()->exports([
@@ -122,6 +133,13 @@ class ListTags extends ListRecords
 
     private function updateUsersMailchimpId(ApiClient $mailchimp, ClientContact|Client $model): void
     {
+        $exampleContacts = $model->whereNotNull('email')
+            ->whereLike('email', '%@example.%')
+            ->count('id');
+        if ($exampleContacts > 0) {
+            $this->sendNotification = true;
+        }
+
         $contacts = $model->whereNotNull('email')
             ->whereNull('mailchimp_id')
             ->whereNotLike('email', '%@example.%')
@@ -132,7 +150,7 @@ class ListTags extends ListRecords
                 $mailchimpUser = $this->addListMember($mailchimp, $email);
                 if ($mailchimpUser !== null) {
                     $model->where('id', $id)->update([
-                        'mailchimp_id' => $mailchimpUser->id
+                        'mailchimp_id' => $mailchimpUser->id,
                     ]);
                 }
 
@@ -140,7 +158,7 @@ class ListTags extends ListRecords
             }
 
             $model->where('id', $id)->update([
-                'mailchimp_id' => $mailchimpUser->exact_matches->members[0]->id
+                'mailchimp_id' => $mailchimpUser->exact_matches->members[0]->id,
             ]);
         }
     }

@@ -4,10 +4,12 @@ namespace App\Filament\Resources\ClientResource\Pages;
 
 use App\Filament\Resources\ClientResource;
 use App\Models\Client;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Support\Facades\Cache;
+use Nnjeim\World\Models\City;
+use Nnjeim\World\Models\Country;
 
 class CreateClient extends CreateRecord
 {
@@ -16,6 +18,26 @@ class CreateClient extends CreateRecord
     protected function getHeaderActions(): array
     {
         return [];
+    }
+
+    private static function getColombiaCities()
+    {
+        return Cache::rememberForever('colombia-countries', function () {
+            $colombiaId = Country::where('name', 'Colombia')->value('id');
+            return City::with('state:id,name')
+                ->where('country_id', $colombiaId)
+                ->get([
+                    'state_id',
+                    'name',
+                    'id',
+                ])
+                ->map(function (City $city) {
+                    $city->name = $city->name . ', ' . $city->state->name;
+
+                    return $city;
+                })
+                ->pluck('name', 'id');
+        });
     }
 
     public static function getFormFields(): array
@@ -49,13 +71,14 @@ class CreateClient extends CreateRecord
 
             Select::make('location_city_id')
                 ->label('Ciudad')
-                ->relationship('city', 'name')
+                ->options(self::getColombiaCities())
+                ->preload()
                 ->searchable(),
 
             Select::make('tags')
                 ->relationship('tags', 'name')
                 ->createOptionForm([
-                    TextInput::make('name')->required()
+                    TextInput::make('name')->required(),
                 ])
                 ->multiple(),
 

@@ -31,6 +31,8 @@ trait ImportClients
                 ImportField::make('Teléfono'),
 
                 ImportField::make('Email')->rules('email'),
+                ImportField::make('Dirección'),
+                ImportField::make('Client')->rules('string'),
 
                 ImportField::make('Fuente')
                     ->helperText('(' . CrmFont::pluck('name')->implode(', ') . ')')

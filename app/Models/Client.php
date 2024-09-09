@@ -39,6 +39,7 @@ class Client extends Model
         'crm_font_id',
         'crm_mean_id',
         'crm_pipeline_stage_id',
+        'location_city_id',
     ];
 
     protected $with = [

@@ -14,15 +14,15 @@ trait ClientDealsDataFilter
     {
         $products = Product::pluck('name', 'id');
 
-        return Filter::make('Datos Compra')
+        return Filter::make('Datos Venta')
             ->form([
                 TextInput::make('number_purchases')
-                    ->label('Cantidad de compras')
+                    ->label('Cantidad de Ventas')
                     ->suffix(' o más')
                     ->numeric(),
 
                 TextInput::make('amount_purchases')
-                    ->label('Monto comprado')
+                    ->label('Monto Ventado')
                     ->suffix(' o más')
                     ->prefix('$')
                     ->numeric(),
@@ -50,11 +50,11 @@ trait ClientDealsDataFilter
                 $indicators = [];
 
                 if ($data['number_purchases'] ?? null) {
-                    $indicators['number_purchases'] = $data['number_purchases'] . ' o más compras';
+                    $indicators['number_purchases'] = $data['number_purchases'] . ' o más Ventas';
                 }
 
                 if ($data['amount_purchases'] ?? null) {
-                    $indicators['amount_purchases'] = '$ ' . number_format($data['amount_purchases'], 0, ',', '.') . ' COP o más en compras';
+                    $indicators['amount_purchases'] = '$ ' . number_format($data['amount_purchases'], 0, ',', '.') . ' COP o más en Ventas';
                 }
 
                 return $indicators;

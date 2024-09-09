@@ -24,10 +24,11 @@ class CrmFontResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?int $navigationSort = 12;
+    protected static ?string $navigationLabel = 'Fuentes';
     protected static ?string $label = 'Fuente Contacto';
     protected static ?string $pluralLabel = 'Fuentes Contacto';
     protected static ?string $navigationGroup = 'Gestión';
-    protected static bool $shouldRegisterNavigation = false;
+    // protected static bool $shouldRegisterNavigation = false;
 
     public static function form(Form $form): Form
     {
@@ -51,21 +52,21 @@ class CrmFontResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->searchable()
-                    ->sortable(),
+                    ->searchable(),
             ])
             ->filters([
                 //
             ])
             ->actions([
                 EditAction::make()->label(''),
-                DeleteAction::make()->label(''),
+                // DeleteAction::make()->label(''),
             ])
-            ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ]);
+            // ->bulkActions([
+            //     BulkActionGroup::make([
+            //         DeleteBulkAction::make(),
+            //     ]),
+            // ])
+            ;
     }
 
     public static function getPages(): array

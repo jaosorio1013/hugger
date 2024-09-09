@@ -17,7 +17,7 @@ class DealsRelationManager extends RelationManager
 {
     protected static string $relationship = 'deals';
 
-    protected static ?string $title = 'Compras';
+    protected static ?string $title = 'Ventas';
     protected static ?string $icon = 'heroicon-o-shopping-cart';
 
     protected ?string $placeholderHeight = 'full';
@@ -38,8 +38,8 @@ class DealsRelationManager extends RelationManager
                         'client_id' => 1
                     ]))
                     ->openUrlInNewTab()
-                    ->modalHeading('Crear compra')
-                    ->label('Crear compra')
+                    ->modalHeading('Crear Venta')
+                    ->label('Crear Venta')
                     ->modalWidth(900),
             ]);
     }

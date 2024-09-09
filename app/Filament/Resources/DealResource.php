@@ -56,8 +56,8 @@ class DealResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
     protected static ?int $navigationSort = 3;
-    protected static ?string $label = 'Compra';
-    protected static ?string $pluralLabel = 'Compras';
+    protected static ?string $label = 'Venta';
+    protected static ?string $pluralLabel = 'Ventas';
 
     public static function form(Form $form): Form
     {
@@ -73,7 +73,7 @@ class DealResource extends Resource
                     ->label('Factura'),
 
                 DatePicker::make('date')
-                    ->label('Fecha Compra'),
+                    ->label('Fecha Venta'),
 
                 Select::make('client_id')
                     ->label('Cliente')
@@ -93,7 +93,7 @@ class DealResource extends Resource
 
             Section::make('Detalle')
                 ->headerActions([
-                    Action::make('Eliminar Productos de la Compra')
+                    Action::make('Eliminar Productos de la Venta')
                         // ->modalHeading('Estas seguro?')
                         ->modalDescription('Todos los artículos existentes se eliminarán del pedido.')
                         ->requiresConfirmation()
@@ -208,6 +208,7 @@ class DealResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('date', 'desc')
             ->columns(static::getTableColumns())
             // ->actions([
             //     DeleteAction::make()->label(''),
@@ -229,7 +230,7 @@ class DealResource extends Resource
         return [
             Split::make([
                 TextColumn::make('date')
-                    ->label('Fecha Compra')
+                    ->label('Fecha Venta')
                     ->sortable()
                     ->date(),
 
@@ -286,7 +287,7 @@ class DealResource extends Resource
         return $infolist
             ->schema([
                 TextEntry::make('date')
-                    ->label('Fecha Compra')
+                    ->label('Fecha Venta')
                     ->date(),
 
                 TextEntry::make('code')
@@ -320,11 +321,5 @@ class DealResource extends Resource
                     ->striped()
                     ->columnSpan(2),
             ]);
-    }
-
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()
-            ->orderByDesc('date');
     }
 }

@@ -76,7 +76,7 @@ class Deal extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->useLogName('Compra')
+            ->useLogName('Venta')
             ->logFillable()
             ->logOnlyDirty();
     }

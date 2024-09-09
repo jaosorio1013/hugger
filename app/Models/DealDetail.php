@@ -58,7 +58,7 @@ class DealDetail extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->useLogName('Detalle compra')
+            ->useLogName('Detalle Venta')
             ->logFillable()
             ->logOnlyDirty();
     }

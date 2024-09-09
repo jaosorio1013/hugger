@@ -64,6 +64,7 @@ class ListClients extends ListRecords
     public function table(Table $table): Table
     {
         return $table
+            ->defaultSort('updated_at', 'desc')
             ->actions($this->getTableActions())
             ->columns($this->getTableColumns())
             ->filtersFormColumns(4)

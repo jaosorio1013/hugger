@@ -63,6 +63,7 @@ class ClientActionsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->defaultSort('updated_at', 'desc')
             ->recordTitleAttribute('name')
             ->columns([
                 TextColumn::make('created_at')
@@ -106,10 +107,5 @@ class ClientActionsRelationManager extends RelationManager
             ->modifyQueryUsing(fn(Builder $query) => $query->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]));
-    }
-
-    protected function getTableQuery(): Builder|Relation|null
-    {
-        return ClientAction::where('client_id', $this->ownerRecord->id)->orderByDesc('updated_at');
     }
 }

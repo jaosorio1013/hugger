@@ -19,12 +19,12 @@ trait ClientProductsBoughtDataFilter
         return Filter::make('Datos Producto')
             ->form([
                 Select::make('products_bought')
-                    ->label('Productos Comprados')
+                    ->label('Productos Ventados')
                     ->multiple()
                     ->options($products),
 
                 Select::make('products_not_bought')
-                    ->label('Productos NO Comprados')
+                    ->label('Productos NO Ventados')
                     ->multiple()
                     ->options($products),
             ])
@@ -53,8 +53,8 @@ trait ClientProductsBoughtDataFilter
             })
             ->indicateUsing(function (array $data) use ($products): array {
                 $indicators = [];
-                $this->filterIndicatorForMultipleSelection($data, $indicators, $products, 'products_bought', 'Productos Comprados');
-                $this->filterIndicatorForMultipleSelection($data, $indicators, $products, 'products_not_bought', 'Productos NO Comprados');
+                $this->filterIndicatorForMultipleSelection($data, $indicators, $products, 'products_bought', 'Productos Ventados');
+                $this->filterIndicatorForMultipleSelection($data, $indicators, $products, 'products_not_bought', 'Productos NO Ventados');
 
                 return $indicators;
             });

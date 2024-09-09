@@ -77,10 +77,4 @@ class ClientResource extends Resource
             'edit' => EditClient::route('/{record}/edit'),
         ];
     }
-
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()
-            ->orderByDesc('id');
-    }
 }

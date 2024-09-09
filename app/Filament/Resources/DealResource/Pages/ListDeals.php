@@ -10,7 +10,7 @@ class ListDeals extends ListRecords
 {
     protected static string $resource = DealResource::class;
 
-    protected ?string $subheading = 'Aquí puedes ver, crear, editar e importarlas las todas las compras realizadas.';
+    protected ?string $subheading = 'Aquí puedes ver, crear, editar e importarlas las todas las Ventas realizadas.';
 
     protected function getHeaderActions(): array
     {

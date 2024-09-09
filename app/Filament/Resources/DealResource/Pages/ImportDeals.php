@@ -18,7 +18,7 @@ class ImportDeals
     public static function action(): ImportAction
     {
         return ImportAction::make('Importar Ventas')
-            ->exampleFile('template-Ventas')
+            ->exampleFile('template-ventas')
             ->icon('heroicon-s-document-arrow-up')
             ->massCreate(false)
             ->fields([

@@ -92,10 +92,4 @@ class ProductResource extends Resource
     {
         return ['name'];
     }
-
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()
-            ->orderByDesc('id');
-    }
 }

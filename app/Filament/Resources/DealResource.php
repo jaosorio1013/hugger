@@ -85,10 +85,10 @@ class DealResource extends Resource
                     )
                     ->required(),
 
-                Select::make('client_contact_id')
-                    ->label('Contacto cliente')
-                    ->relationship('contact', 'name')
-                    ->searchable(),
+                // Select::make('client_contact_id')
+                //     ->label('Contacto cliente')
+                //     ->relationship('contact', 'name')
+                //     ->searchable(),
             ]),
 
             Section::make('Detalle')

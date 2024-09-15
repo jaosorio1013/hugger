@@ -18,9 +18,9 @@ class ManageClientsStages extends Page
     protected static string $view = 'filament.pages.manage-client-stages';
 
     // Our Custom heading to be displayed on the page
-    protected ?string $heading = 'Tablero de mis Clientes';
+    protected ?string $heading = 'Pipeline Clientes';
     // Custom Navigation Link name
-    protected static ?string $navigationLabel = 'Tablero';
+    protected static ?string $navigationLabel = 'Pipeline';
 
     // We will be listening for the `statusChangeEvent` event to update the record status
     #[On('statusChangeEvent')]
@@ -28,6 +28,10 @@ class ManageClientsStages extends Page
     {
         // Find the client and update the crm_pipeline_stage_id
         $client = Client::find($id);
+        if ($client->crm_pipeline_stage_id == $crm_pipeline_stage_id) {
+            return;
+        }
+
         $client->crm_pipeline_stage_id = $crm_pipeline_stage_id;
 
         if ($client->user_id === null && !auth()->user()->is_admin) {
@@ -82,6 +86,7 @@ class ManageClientsStages extends Page
                 return [
                     'id' => $stage->id,
                     'title' => $stage->name,
+                    'color' => $stage->color,
                 ];
             });
     }

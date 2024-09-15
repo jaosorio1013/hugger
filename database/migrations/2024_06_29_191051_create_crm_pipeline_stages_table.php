@@ -31,13 +31,13 @@ return new class extends Migration {
                 'position' => 3,
             ],
             [
-                'name' => 'Rechazado',
-                'position' => 4,
+                'name' => 'Vendido',
+                'position' => 98,
             ],
             [
-                'name' => 'Vendido',
-                'position' => 5,
-            ]
+                'name' => 'Rechazado',
+                'position' => 99,
+            ],
         ];
 
         foreach ($pipelineStages as $stage) {

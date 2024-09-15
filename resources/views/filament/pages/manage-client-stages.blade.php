@@ -3,11 +3,16 @@
         <div>
             <div class="w-full h-full flex space-x-4 rtl:space-x-reverse overflow-x-auto">
                 @foreach ($statuses as $status)
-                    <div class="h-full flex-1">
-                        <div class="bg-primary-200 cursor-pointer rounded px-2 flex flex-col h-full" id="{{ $status['id'] }}">
-                            <div class="p-2 text-sm text-gray-900">
+                    <div class="h-full flex-1 px-1">
+                        <div
+                                class="cursor-pointer rounded p-2 flex flex-col h-full"
+                                id="{{ $status['id'] }}"
+                                style="background: {{ $status['color'] }}; min-height: 300px;"
+                        >
+                            <div class="p-2 text-gray-900 font-bold">
                                 {{ $status['title'] }}
                             </div>
+
                             <div id="{{ $status['kanbanRecordsId'] }}" data-status-id="{{ $status['id'] }}"
                                 class="space-y-2 p-2 flex-1 overflow-y-auto">
 
@@ -15,9 +20,7 @@
                                     <div id="{{ $record['id'] }}"
                                         class="shadow bg-white dark:bg-gray-800 p-2 rounded border">
 
-                                        <p>
-                                            {{ $record['title'] }}
-                                        </p>
+                                        <p>{{ $record['title'] }}</p>
 
                                         <p
                                                 class="text-xs italic"

@@ -19,7 +19,6 @@ return new class extends Migration {
             $table->unsignedTinyInteger('type')->default(Client::TYPE_NATURAL)->index();
             $table->foreignId('user_id')->nullable();
             $table->foreignId('crm_font_id')->nullable();
-            $table->foreignId('crm_mean_id')->nullable();
             $table->foreignId('location_city_id')->nullable();
             $table->foreignId('crm_pipeline_stage_id')->nullable();
             $table->softDeletes();

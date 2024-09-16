@@ -21,7 +21,6 @@ class ClientFactory extends Factory
         }
 
         $fontId = CrmFont::inRandomOrder()->value('id');
-        $meanId = CrmMean::inRandomOrder()->value('id');
 
         $type = $this->faker->randomElement([Client::TYPE_NATURAL, Client::TYPE_COMPANY, Client::TYPE_ALLIED]);
 
@@ -37,7 +36,6 @@ class ClientFactory extends Factory
 
             'user_id' => $userId,
             'crm_font_id' => $fontId,
-            'crm_mean_id' => $meanId,
         ];
     }
 }

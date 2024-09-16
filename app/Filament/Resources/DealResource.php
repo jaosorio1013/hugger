@@ -42,7 +42,7 @@ use Livewire\Component as Livewire;
 
 class DealResource extends Resource
 {
-    public function bar()
+    public function bar(): string
     {
         return 'asdasd';
     }

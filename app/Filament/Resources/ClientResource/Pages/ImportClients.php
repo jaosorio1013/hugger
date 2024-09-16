@@ -34,14 +34,6 @@ trait ImportClients
                 ImportField::make('Dirección'),
                 ImportField::make('Client')->rules('string'),
 
-                ImportField::make('Fuente')
-                    ->helperText('(' . CrmFont::pluck('name')->implode(', ') . ')')
-                    ->rules(['exists:crm_fonts,name']),
-
-                ImportField::make('Medio')
-                    ->helperText('(' . CrmMean::pluck('name')->implode(', ') . ')')
-                    ->rules(['exists:crm_means,name']),
-
                 ImportField::make('Tipo')
                     ->helperText('(Natural, Empresa, Aliado)')
                     ->rules('in:Natural,Empresa,Aliado'),
@@ -84,7 +76,6 @@ trait ImportClients
             'phone' => $data['Teléfono'] ?? null,
             'email' => $data['Email'] ?? null,
             'crm_font_id' => $this->getMean($data['Fuente'] ?? null),
-            'crm_mean_id' => $this->getFont($data['Medio'] ?? null),
             'type' => $this->getClientType(
                 $data['Tipo'] ?? null
             ),

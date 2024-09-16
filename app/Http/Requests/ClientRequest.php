@@ -16,7 +16,6 @@ class ClientRequest extends FormRequest
             'type' => ['required', 'integer'],
             'user_id' => ['nullable', 'exists:users'],
             'crm_font_id' => ['nullable', 'exists:crm_fonts'],
-            'crm_mean_id' => ['nullable', 'exists:crm_means'],
         ];
     }
 

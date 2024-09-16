@@ -47,14 +47,6 @@ class ContactsRelationManager extends RelationManager
 
                 TextInput::make('phone')
                     ->label('Teléfono'),
-
-                Select::make('crm_font_id')
-                    ->label('Fuente de contacto')
-                    ->relationship('font', 'name'),
-
-                Select::make('crm_mean_id')
-                    ->label('Medio de contacto')
-                    ->relationship('mean', 'name'),
             ]);
     }
 
@@ -76,12 +68,6 @@ class ContactsRelationManager extends RelationManager
 
                 TextColumn::make('phone')
                     ->label('Teléfono'),
-
-                TextColumn::make('font.name')
-                    ->label('Fuente de contacto'),
-
-                TextColumn::make('mean.name')
-                    ->label('Medio de contacto'),
             ])
             // ->filters([
             //     TrashedFilter::make(),

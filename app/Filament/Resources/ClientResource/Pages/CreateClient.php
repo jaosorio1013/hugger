@@ -88,10 +88,6 @@ class CreateClient extends CreateRecord
                 ->label('Fuente de contacto')
                 ->relationship('font', 'name'),
 
-            Select::make('crm_mean_id')
-                ->label('Medio de contacto')
-                ->relationship('mean', 'name'),
-
             Select::make('crm_pipeline_stage_id')
                 ->label('Estado Pipeline')
                 ->relationship('stage', 'name'),

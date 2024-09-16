@@ -13,8 +13,6 @@ class ClientContactRequest extends FormRequest
             'email' => ['nullable', 'email', 'max:254'],
             'charge' => ['nullable'],
             'phone' => ['nullable'],
-            'crm_font_id' => ['nullable', 'exists:crm_fonts'],
-            'crm_mean_id' => ['nullable', 'exists:crm_means'],
         ];
     }
 

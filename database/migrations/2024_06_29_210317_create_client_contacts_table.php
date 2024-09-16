@@ -16,8 +16,6 @@ return new class extends Migration
             $table->string('charge')->index()->nullable();
             $table->string('phone')->nullable();
             $table->foreignId('client_id')->nullable()->constrained()->cascadeOnDelete();
-            $table->foreignId('crm_font_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('crm_mean_id')->nullable()->constrained()->nullOnDelete();
             $table->softDeletes();
             $table->timestamps();
         });

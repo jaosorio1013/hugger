@@ -21,23 +21,11 @@ class ClientContact extends Model
         'charge',
         'phone',
         'client_id',
-        'crm_font_id',
-        'crm_mean_id',
     ];
 
     public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class);
-    }
-
-    public function font(): BelongsTo
-    {
-        return $this->belongsTo(CrmFont::class, 'crm_font_id');
-    }
-
-    public function mean(): BelongsTo
-    {
-        return $this->belongsTo(CrmMean::class, 'crm_mean_id');
     }
 
     public function getActivitylogOptions(): LogOptions

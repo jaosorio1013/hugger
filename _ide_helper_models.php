@@ -25,7 +25,6 @@ namespace App\Models{
  * @property int $type
  * @property int|null $user_id
  * @property int|null $crm_font_id
- * @property int|null $crm_mean_id
  * @property int|null $location_city_id
  * @property int|null $crm_status_id
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -125,7 +124,6 @@ namespace App\Models{
  * @property string|null $phone
  * @property int|null $client_id
  * @property int|null $crm_font_id
- * @property int|null $crm_mean_id
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at

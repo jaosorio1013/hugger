@@ -37,7 +37,6 @@ class Client extends Model
         'type',
         'user_id',
         'crm_font_id',
-        'crm_mean_id',
         'crm_pipeline_stage_id',
         'location_city_id',
     ];
@@ -86,11 +85,6 @@ class Client extends Model
     public function font(): BelongsTo
     {
         return $this->belongsTo(CrmFont::class, 'crm_font_id');
-    }
-
-    public function mean(): BelongsTo
-    {
-        return $this->belongsTo(CrmMean::class, 'crm_mean_id');
     }
 
     public function city(): BelongsTo

@@ -14,7 +14,5 @@ class ClientsSeeder extends Seeder
         Client::factory(10)->create()->each(function (Client $client) use ($tags) {
             $client->tags()->attach($tags->random(rand(1, 4)));
         });
-
-
     }
 }

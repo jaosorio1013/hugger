@@ -27,15 +27,19 @@ class ClientExporter extends ExcelExport
 
             Column::make('user.name')->heading('Respondable'),
 
-            Column::make('status_name')->heading('Estado'),
+            Column::make('stage.name')->heading('Estado Pipeline'),
 
             Column::make('font.name')->heading('Fuente'),
 
-            Column::make('mean.name')->heading('Medio'),
+            Column::make('city')
+                ->heading('Ciudad')
+                ->formatStateUsing(
+                    fn($record) => $record->location_city_id ? $record->city->name . ', ' . $record->city->state->name : null,
+                ),
 
-            Column::make('city.name')->heading('Ciudad'),
-
-            // Column::make('tags')->listAsJson(),
+            Column::make('tags')->formatStateUsing(
+                fn($record) => $record->tags->pluck('name')->join(', '),
+            ),
         ]);
     }
 }

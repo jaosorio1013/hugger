@@ -22,26 +22,16 @@ use Filament\Forms\Set;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\ForceDeleteAction;
-use Filament\Tables\Actions\ForceDeleteBulkAction;
-use Filament\Tables\Actions\RestoreAction;
-use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\Layout\Panel;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
-use Filament\Tables\Filters\QueryBuilder;
-use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Icetalker\FilamentTableRepeatableEntry\Infolists\Components\TableRepeatableEntry;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Livewire\Component as Livewire;
 
 class DealResource extends Resource
@@ -88,11 +78,6 @@ class DealResource extends Resource
                         request()->get('client_id')
                     )
                     ->required(),
-
-                // Select::make('client_contact_id')
-                //     ->label('Contacto cliente')
-                //     ->relationship('contact', 'name')
-                //     ->searchable(),
             ]),
 
             Section::make('Detalle')
@@ -102,10 +87,10 @@ class DealResource extends Resource
                         ->modalDescription('Todos los artículos existentes se eliminarán del pedido.')
                         ->requiresConfirmation()
                         ->color('danger')
-                        ->action(fn (Set $set) => $set('details', [])),
+                        ->action(fn(Set $set) => $set('details', [])),
                 ])
                 ->schema([
-                    static::getDealProducts()
+                    static::getDealProducts(),
                 ]),
 
             Section::make()
@@ -117,8 +102,8 @@ class DealResource extends Resource
                         ->numeric()
                         ->required()
                         ->prefix('$')
-                        ->suffix('COP')
-                ])
+                        ->suffix('COP'),
+                ]),
         ];
     }
 
@@ -150,7 +135,7 @@ class DealResource extends Resource
 
                 TextInput::make('quantity')
                     ->afterStateUpdated(
-                        fn (Get $get, $livewire, Set $set) => $set('total', $get('price') * $get('quantity'))
+                        fn(Get $get, $livewire, Set $set) => $set('total', $get('price') * $get('quantity'))
                     )
                     ->numeric()
                     ->minValue(1)
@@ -162,7 +147,7 @@ class DealResource extends Resource
                     ->prefix('$')
                     ->suffix('COP')
                     ->afterStateUpdated(
-                        fn (Get $get, $livewire, Set $set) => $set('total', $get('price') * $get('quantity'))
+                        fn(Get $get, $livewire, Set $set) => $set('total', $get('price') * $get('quantity'))
                     )
                     ->minValue(0)
                     ->required()
@@ -180,8 +165,8 @@ class DealResource extends Resource
                 self::updateTotals($get, $livewire);
             })
             ->deleteAction(
-                fn (Action $action) => $action->after(
-                    fn (Get $get, $livewire) => self::updateTotals($get, $livewire)
+                fn(Action $action) => $action->after(
+                    fn(Get $get, $livewire) => self::updateTotals($get, $livewire)
                 ),
             )
             ->required();
@@ -198,7 +183,7 @@ class DealResource extends Resource
             return;
         }
 
-        $selectedProducts = collect($products)->filter(fn ($item) => !empty($item['product_id']) && !empty($item['quantity']));
+        $selectedProducts = collect($products)->filter(fn($item) => !empty($item['product_id']) && !empty($item['quantity']));
 
         $prices = collect($products)->pluck('price', 'product_id');
 
@@ -213,7 +198,7 @@ class DealResource extends Resource
     {
         return $table
             ->defaultSort('date', 'desc')
-            ->filtersFormColumns(4)
+            ->filtersFormColumns(2)
             ->filters([
                 Filter::make('factura')
                     ->form([
@@ -224,7 +209,7 @@ class DealResource extends Resource
                         return $query
                             ->when(
                                 $data['code'],
-                                fn (Builder $query, $date): Builder => $query->whereLike('code', "%$date%"),
+                                fn(Builder $query, $date): Builder => $query->whereLike('code', "%$date%"),
                             );
                     }),
 
@@ -233,20 +218,8 @@ class DealResource extends Resource
                     ->label('Producto')
                     ->preload(),
             ], layout: FiltersLayout::AboveContent)
-            ->columns(static::getTableColumns())
-            // ->actions([
-            //     DeleteAction::make()->label(''),
-            //     RestoreAction::make(),
-            //     ForceDeleteAction::make(),
-            // ])
-            ->recordUrl(fn ($record) => EditDeal::getUrl([$record]))
-            ->bulkActions([
-                // BulkActionGroup::make([
-                //     DeleteBulkAction::make(),
-                //     RestoreBulkAction::make(),
-                //     ForceDeleteBulkAction::make(),
-                // ]),
-            ]);
+            ->recordUrl(fn($record) => EditDeal::getUrl([$record]))
+            ->columns(static::getTableColumns());
     }
 
     public static function getTableColumns(): array
@@ -271,7 +244,7 @@ class DealResource extends Resource
             ]),
 
             Panel::make([
-                DealDetailsColumn::make('details')
+                DealDetailsColumn::make('details'),
             ])->collapsible(true),
         ];
     }

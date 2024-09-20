@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -79,5 +80,16 @@ class Deal extends Model
             ->useLogName('Venta')
             ->logFillable()
             ->logOnlyDirty();
+    }
+
+    public static function getMonthsFromFirstDealToNow(): int
+    {
+        return (int)Deal::query()
+            ->orderBy('date')
+            ->selectRaw(
+                'PERIOD_DIFF( EXTRACT(YEAR_MONTH FROM CURRENT_DATE), EXTRACT(YEAR_MONTH FROM date) ) AS number_of_months'
+            )
+            ->take(1)
+            ->value('number_of_months');
     }
 }

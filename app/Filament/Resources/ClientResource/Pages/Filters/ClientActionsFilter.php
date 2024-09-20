@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 trait ClientActionsFilter
 {
-    private function getActionsFilter()
+    private function getActionsFilter(): Filter
     {
         $actions = CrmAction::pluck('name', 'id');
         $actionStates = CrmPipelineStage::pluck('name', 'id');

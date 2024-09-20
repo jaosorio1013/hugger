@@ -11,28 +11,19 @@ use App\Filament\Resources\ClientResource\Pages\Filters\ClientDealsDataFilter;
 use App\Filament\Resources\ClientResource\Pages\Filters\ClientProductsBoughtDataFilter;
 use App\Filament\Resources\ClientResource\RelationManagers\ClientActionsRelationManager;
 use App\Models\Client;
+use App\Models\Tag;
 use App\Models\User;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ForceDeleteAction;
-use Filament\Tables\Actions\ForceDeleteBulkAction;
-use Filament\Tables\Actions\RestoreAction;
-use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Filters\Filter;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Icetalker\FilamentTableRepeatableEntry\Infolists\Components\TableRepeatableEntry;
 use Illuminate\Contracts\View\View;
@@ -70,7 +61,6 @@ class ListClients extends ListRecords
             ->defaultSort('updated_at', 'desc')
             ->actions($this->getTableActions())
             ->columns($this->getTableColumns())
-            // ->filtersFormColumns(4)
             ->filters([
                 $this->getClientDataFilter(),
                 $this->getClientDataFilter2(),
@@ -79,25 +69,44 @@ class ListClients extends ListRecords
                 $this->getActionsFilter(),
             ], layout: FiltersLayout::AboveContentCollapsible)
             ->bulkActions([
-                BulkActionGroup::make([
-                    BulkAction::make('Asignar responsable a clientes')
-                        ->icon('heroicon-c-share')
-                        ->deselectRecordsAfterCompletion()
-                        ->color('info')
-                        ->form([
-                            Select::make('user_id')
-                                ->label('Nuevo responsable')
-                                ->options(
-                                    User::pluck('name', 'id')
-                                        ->prepend('Sin responsable', null)
-                                ),
-                        ])
-                        ->action(fn(array $data, Collection $records) => $records->each->update($data)),
-                    // DeleteBulkAction::make(),
-                    // RestoreBulkAction::make(),
-                    // ForceDeleteBulkAction::make(),
-                ]),
+                BulkAction::make('Asignar responsable')
+                    ->requiresConfirmation()
+                    ->modalDescription('')
+                    ->icon('heroicon-c-share')
+                    ->deselectRecordsAfterCompletion()
+                    ->color('info')
+                    ->form([
+                        Select::make('user_id')
+                            ->label('Nuevo responsable')
+                            ->options(
+                                User::pluck('name', 'id')
+                                    ->prepend('Sin responsable', null)
+                            ),
+                    ])
+                    ->action(fn(array $data, Collection $records) => $records->each->update($data)),
+
+                BulkAction::make('Asignar tags')
+                    ->requiresConfirmation()
+                    ->icon('heroicon-c-tag')
+                    ->deselectRecordsAfterCompletion()
+                    ->color('info')
+                    ->form([
+                        Select::make('tags')
+                            ->label('Asignar Tags')
+                            ->options(
+                                Tag::pluck('name', 'id')
+                            ),
+                    ])
+                    ->action(function(array $data, Collection $records) {
+                        $tags = $data['tags'];
+
+                        $records->each(function (Client $record) use ($tags) {
+                            $record->tags()->syncWithoutDetaching($tags);
+                        });
+                    }),
             ]);
+
+        // User::all()->each
     }
 
     public function getTableColumns(): array

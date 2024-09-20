@@ -57,7 +57,9 @@ class ClientResource extends Resource
 
     public static function form(Form $form): Form
     {
-        return $form->schema(CreateClient::getFormFields());
+        return $form->schema(
+            CreateClient::getFormFields()
+        );
     }
 
     public static function getRelations(): array

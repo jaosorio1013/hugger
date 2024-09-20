@@ -4,10 +4,12 @@ namespace App\Filament\Resources\ClientResource\Pages;
 
 use App\Filament\Resources\ClientResource;
 use App\Models\Client;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\HtmlString;
 use Nnjeim\World\Models\City;
 use Nnjeim\World\Models\Country;
 
@@ -88,9 +90,12 @@ class CreateClient extends CreateRecord
                 ->label('Fuente de contacto')
                 ->relationship('font', 'name'),
 
-            Select::make('crm_pipeline_stage_id')
-                ->label('Estado Pipeline')
-                ->relationship('stage', 'name'),
+            Placeholder::make('stage')
+                ->label('')
+                ->content(fn(Client $record) => new HtmlString(
+                    '<span class="px-4 py-1 rounded text-2xl" style="background: ' . $record->stage->color . '">' . $record->stage->name . '</span>'
+                ))
+                ->hiddenOn(operations: CreateClient::class),
         ];
     }
 }

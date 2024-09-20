@@ -27,6 +27,8 @@ use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
 use Icetalker\FilamentTableRepeatableEntry\Infolists\Components\TableRepeatableEntry;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 use pxlrbt\FilamentExcel\Actions\Pages\ExportAction;
@@ -105,8 +107,6 @@ class ListClients extends ListRecords
                         });
                     }),
             ]);
-
-        // User::all()->each
     }
 
     public function getTableColumns(): array

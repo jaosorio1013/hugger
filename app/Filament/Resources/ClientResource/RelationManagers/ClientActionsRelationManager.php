@@ -2,8 +2,7 @@
 
 namespace App\Filament\Resources\ClientResource\RelationManagers;
 
-use App\Models\Client;
-use App\Models\ClientAction;
+use App\Filament\Resources\ClientResource\Pages\EditClient;
 use App\Models\CrmAction;
 use App\Models\CrmPipelineStage;
 use Filament\Forms\Components\RichEditor;
@@ -22,7 +21,7 @@ use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ClientActionsRelationManager extends RelationManager
@@ -31,6 +30,15 @@ class ClientActionsRelationManager extends RelationManager
 
     protected static ?string $title = 'Acciones';
     protected static ?string $icon = 'heroicon-o-play';
+
+    protected function configureCreateAction(CreateAction $action): void
+    {
+        parent::configureCreateAction($action);
+
+        $action->successRedirectUrl(
+            fn(Model $record): string => EditClient::getUrl([$record->client_id])
+        );
+    }
 
     public function form(Form $form): Form
     {

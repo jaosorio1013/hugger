@@ -6,10 +6,11 @@ use App\Models\Client;
 use App\Models\CrmFont;
 use App\Models\CrmMean;
 use App\Models\Deal;
-use Filament\Forms\Components\Actions\Action;
+use App\Models\User;
 use Jaosorio1013\FilamentImport\Actions\ImportAction;
 use Jaosorio1013\FilamentImport\Actions\ImportField;
-use Filament\Tables\Actions\Action as TableAction;
+use Nnjeim\World\Models\City;
+use Nnjeim\World\Models\Country;
 
 trait ImportClients
 {
@@ -17,22 +18,35 @@ trait ImportClients
 
     public function importClientAction(): ImportAction
     {
+        $fonts = CrmFont::pluck('name', 'id');
+        $users = User::whereNotIn('email', [
+            'test@example.com',
+            'jaosorio1013@gmail.com',
+        ])->pluck('name', 'id');
+
         return ImportAction::make('Importar')
             ->exampleFile('template-clientes')
             ->icon('heroicon-s-document-arrow-up')
             ->massCreate(false)
             ->fields([
+                ImportField::make('Identificación'),
+
                 ImportField::make('Nombre')
                     // ->rules(['required'], ['Nombre Requerido'])
                     ->required(),
-
-                ImportField::make('Identificación'),
 
                 ImportField::make('Teléfono'),
 
                 ImportField::make('Email')->rules('email'),
                 ImportField::make('Dirección'),
-                ImportField::make('Client')->rules('string'),
+
+                ImportField::make('Ciudad'),
+
+                ImportField::make('Responsable')
+                    ->helperText('(' . $users->implode(', ') . ')'),
+
+                ImportField::make('Fuente')
+                    ->helperText('(' . $fonts->implode(', ') . ')'),
 
                 ImportField::make('Tipo')
                     ->helperText('(Natural, Empresa, Aliado)')
@@ -43,19 +57,19 @@ trait ImportClients
                 ImportField::make('Emails Contactos Cliente')->rules('email'),
                 ImportField::make('Cargos Contactos Cliente'),
 
-            ], columns: 2)
+            ], columns: 3)
             ->handleRecordCreation(
-                function (array $data): Client {
-                    $this->createClient($data);
+        function (array $data): Client {
+            $this->createClient($data);
 
-                    $this->createClientContact($data);
+            $this->createClientContact($data);
 
-                    return new Client();
-                }
-            )
-            ->after(
-                fn(Deal $deal) => redirect(ListClients::getUrl())
-            );
+            return new Client();
+        }
+    )
+        ->after(
+            fn(Deal $deal) => redirect(ListClients::getUrl())
+        );
     }
 
     private function createClient(array $data): void
@@ -75,16 +89,30 @@ trait ImportClients
             'name' => $data['Nombre'],
             'phone' => $data['Teléfono'] ?? null,
             'email' => $data['Email'] ?? null,
-            'crm_font_id' => $this->getMean($data['Fuente'] ?? null),
+            'address' => $data['Dirección'] ?? null,
+            'location_city_id' => $this->getCity($data['Ciudad'] ?? null),
+            'user_id' => $this->getOwner($data['Responsable'] ?? null),
+            'crm_font_id' => $this->getFont($data['Fuente'] ?? null),
             'type' => $this->getClientType(
                 $data['Tipo'] ?? null
             ),
         ]);
     }
 
-    private function getMean(string $mean = null)
+    private function getCity($ciudad)
     {
-        return CrmMean::where('name', $mean)->value('id') ?? null;
+        $colombiaId = Country::query()
+            ->where('name', 'Colombia')
+            ->value('id');
+
+        return City::query()
+            ->where('country_id', $colombiaId)
+            ->where('name', $ciudad)->value('id') ?? null;
+    }
+
+    private function getOwner($user)
+    {
+        return User::where('name', $user)->value('id') ?? null;
     }
 
     private function getFont(string $font = null)

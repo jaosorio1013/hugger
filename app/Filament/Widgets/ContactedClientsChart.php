@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Models\ClientAction;
+use App\Models\Deal;
 use Carbon\Carbon;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Collection;
@@ -45,11 +46,11 @@ class ContactedClientsChart extends ChartWidget
         return $data;
     }
 
-    private function getClientsContacted()
+    private function getClientsContacted(): \Illuminate\Database\Eloquent\Collection|Collection
     {
         // return Cache::rememberForever('getClientsContacted', function () {
         return ClientAction::query()
-            ->where('created_at', '>=', Carbon::now()->subMonths(self::CHART_MONTHS))
+            // ->where('created_at', '>=', Carbon::now()->subMonths(Deal::DEFAULT_CHART_MONTHS))
             ->groupBy('date_mont', 'user_id')
             ->get([
                 'user_id',

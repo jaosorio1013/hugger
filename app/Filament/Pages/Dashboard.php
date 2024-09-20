@@ -9,7 +9,6 @@ use Filament\Forms\Form;
 use Filament\Pages\Dashboard as BasePage;
 use Filament\Pages\Dashboard\Concerns\HasFiltersForm;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 
 class Dashboard extends BasePage
 {

@@ -4,6 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Models\Client;
 use App\Models\CrmFont;
+use App\Models\Deal;
 use Carbon\Carbon;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Collection;
@@ -54,11 +55,11 @@ class ContactFontChart extends ChartWidget
         });
     }
 
-    private function getClientsByContactFont()
+    private function getClientsByContactFont(): \Illuminate\Database\Eloquent\Collection|Collection
     {
-        return Cache::rememberForever('getClientsByOwnerAndContactFont', function () {
+        // return Cache::rememberForever('getClientsByOwnerAndContactFont', function () {
             return Client::query()
-                ->where('created_at', '>=', Carbon::now()->subMonths(self::CHART_MONTHS))
+                // ->where('created_at', '>=', Carbon::now()->subMonths(Deal::DEFAULT_CHART_MONTHS))
                 ->groupBy('date_mont', 'crm_font_id')
                 ->get([
                     'crm_font_id',
@@ -69,7 +70,7 @@ class ContactFontChart extends ChartWidget
                 ->map(function (Collection $clientsOfOwner) {
                     return $clientsOfOwner->keyBy('date_mont')->toArray();
                 });
-        });
+        // });
     }
 
     protected function getType(): string

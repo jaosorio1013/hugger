@@ -17,6 +17,8 @@ class Deal extends Model
 
     use LogsActivity;
 
+    public const DEFAULT_CHART_MONTHS = 5;
+
     protected $fillable = [
         'code',
         'client_name',

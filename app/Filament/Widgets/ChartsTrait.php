@@ -19,7 +19,6 @@ trait ChartsTrait
 
     private array $months;
     private int $iteration = 0;
-    protected const CHART_MONTHS = 5;
 
     private function hasFilters(): bool
     {
@@ -45,7 +44,7 @@ trait ChartsTrait
 
         Cache::remember('months_on_chart', 86400, function () {
             $this->months = [];
-            for ($monthsToRemove = self::CHART_MONTHS; $monthsToRemove > 0; $monthsToRemove--) {
+            for ($monthsToRemove = Deal::DEFAULT_CHART_MONTHS; $monthsToRemove > 0; $monthsToRemove--) {
                 $this->months[] = Carbon::now()->subMonths($monthsToRemove)->format('Y-m');
             }
         });
@@ -85,7 +84,7 @@ trait ChartsTrait
 
         return Cache::remember('deals_by_owner', 86400, function () use ($baseQuery) {
             return $baseQuery
-                ->where('date', '>=', Carbon::now()->subMonths(self::CHART_MONTHS))
+                ->where('date', '>=', Carbon::now()->subMonths(Deal::DEFAULT_CHART_MONTHS))
                 ->get()
                 ->groupBy('owner_id')
                 ->map(function (Collection $ownerDeals) {

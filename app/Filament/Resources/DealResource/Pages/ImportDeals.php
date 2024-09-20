@@ -9,7 +9,9 @@ use App\Models\Product;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\TextInput;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\HtmlString;
 use Jaosorio1013\FilamentImport\Actions\ImportAction;
 use Jaosorio1013\FilamentImport\Actions\ImportField;
 
@@ -18,6 +20,7 @@ class ImportDeals
     public static function action(): ImportAction
     {
         return ImportAction::make('Importar Ventas')
+            ->modalDescription(new HtmlString('<span style="color: #d97706;"><b>Importante:</b> !No se deben importar archivos con funciones pues causan errores!</span>'))
             ->exampleFile('template-ventas')
             ->icon('heroicon-s-document-arrow-up')
             ->massCreate(false)

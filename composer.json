@@ -16,7 +16,7 @@
         "filament/filament": "^3.2",
         "icetalker/filament-table-repeatable-entry": "^1.0",
         "jaosorio1013/filament-import": "dev-filament3",
-        "jibaymcs/filament-tour": "v3.1.0.7",
+        "jibaymcs/filament-tour": "^3.0",
         "laravel/framework": "^11.0",
         "laravel/tinker": "^2.9",
         "laraveles/spanish": "^1.5",

@@ -58,8 +58,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->darkMode(false)
             ->plugins([
-                FilamentTourPlugin::make()
-                    ->onlyVisibleOnce(false),
+                FilamentTourPlugin::make(),
 
                 ActivitylogPlugin::make()
                     ->authorize(fn() => auth()->user()->is_admin == true)

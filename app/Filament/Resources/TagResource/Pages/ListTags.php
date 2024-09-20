@@ -12,6 +12,9 @@ use Filament\Actions\CreateAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Facades\DB;
+use JibayMcs\FilamentTour\Tour\HasTour;
+use JibayMcs\FilamentTour\Tour\Step;
+use JibayMcs\FilamentTour\Tour\Tour;
 use Maatwebsite\Excel\Excel;
 use MailchimpMarketing\ApiClient;
 use pxlrbt\FilamentExcel\Actions\Pages\ExportAction;
@@ -21,6 +24,8 @@ use Ramsey\Collection\Collection;
 
 class ListTags extends ListRecords
 {
+    use HasTour;
+
     protected static string $resource = TagResource::class;
 
     private bool $sendNotification = false;
@@ -63,7 +68,10 @@ class ListTags extends ListRecords
 
                         return $query->whereNull('mailchimp_id');
                     }),
-            ]),
+            ])
+            // ->successRedirectUrl('https://us14.admin.mailchimp.com/audience/tags/')
+            // ->dispatchSuccessRedirect()
+            ,
 
             CreateAction::make(),
         ];
@@ -199,5 +207,28 @@ class ListTags extends ListRecords
         ]);
 
         return $mailchimp;
+    }
+
+    public function tours(): array
+    {
+        return [
+            Tour::make('dashboard')
+                ->steps(
+                    Step::make()
+                        ->title("Segmentación de campañas!")
+                        // ->description(view('tutorial.dashboard.introduction'))
+                    ,
+
+                    Step::make('.fi-ac-btn-action:nth-child(2)')
+                        ->title('Crear Tags')
+                        ->description('Primero debemos crear los tags faltantes en Mailchimp y para eso le damos click en exportar'),
+
+                    Step::make('.fi-ac-btn-action:nth-child(1)')
+                        ->title('Actualizar tags en Mailchimp')
+                        ->description('Ahora, puedes dar click en este botón para actualizar los tags de Mailchimp')
+                        // ->icon('heroicon-o-user-circle')
+                        // ->iconColor('primary')
+                ),
+        ];
     }
 }

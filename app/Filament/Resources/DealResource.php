@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ClientResource\Pages;
 use App\Filament\Resources\DealResource\Pages\CreateDeal;
 use App\Filament\Resources\DealResource\Pages\EditDeal;
 use App\Filament\Resources\DealResource\Pages\ListDeals;
@@ -33,6 +32,11 @@ use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\Layout\Panel;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\QueryBuilder;
+use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Icetalker\FilamentTableRepeatableEntry\Infolists\Components\TableRepeatableEntry;
 use Illuminate\Database\Eloquent\Builder;
@@ -209,6 +213,26 @@ class DealResource extends Resource
     {
         return $table
             ->defaultSort('date', 'desc')
+            ->filtersFormColumns(4)
+            ->filters([
+                Filter::make('factura')
+                    ->form([
+                        TextInput::make('code')
+                            ->label('Factura'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['code'],
+                                fn (Builder $query, $date): Builder => $query->whereLike('code', "%$date%"),
+                            );
+                    }),
+
+                SelectFilter::make('products.name')
+                    ->relationship('products', 'name')
+                    ->label('Producto')
+                    ->preload(),
+            ], layout: FiltersLayout::AboveContent)
             ->columns(static::getTableColumns())
             // ->actions([
             //     DeleteAction::make()->label(''),

@@ -5,6 +5,7 @@ namespace App\Filament\Resources\DealResource\Pages;
 use App\Filament\Resources\DealResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Filters\Filter;
 
 class ListDeals extends ListRecords
 {

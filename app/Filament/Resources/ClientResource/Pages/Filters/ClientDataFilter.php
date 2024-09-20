@@ -2,16 +2,19 @@
 
 namespace App\Filament\Resources\ClientResource\Pages\Filters;
 
+use App\Filament\Resources\ClientResource\Pages\CreateClient;
 use App\Models\Client;
+use App\Models\CrmFont;
 use App\Models\Tag;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
+use Nnjeim\World\Models\City;
 
 trait ClientDataFilter
 {
-    private function getClientDataFilter()
+    private function getClientDataFilter(): Filter
     {
         $clientTypes = collect(Client::TYPES);
         $tags = Tag::pluck('name', 'id');
@@ -54,6 +57,43 @@ trait ClientDataFilter
                 }
                 $this->filterIndicatorForMultipleSelection($data, $indicators, $clientTypes, 'type', 'Tipo empresa');
                 $this->filterIndicatorForMultipleSelection($data, $indicators, $tags, 'tags', 'Tags');
+
+                return $indicators;
+            });
+    }
+
+    private function getClientDataFilter2(): Filter
+    {
+        $cities = CreateClient::getColombiaCities();
+        $fonts = CrmFont::pluck('name', 'id');
+
+        return Filter::make('Datos Cliente 2')
+            ->form([
+                Select::make('crm_font_id')
+                    ->label('Fuente')
+                    ->options($fonts),
+
+                Select::make('city')
+                    ->multiple()
+                    ->label('Tipo Empresa')
+                    ->options($cities),
+            ])
+            ->query(function (Builder $query, array $data): Builder {
+                return $query
+                    ->when(
+                        $data['city'] ?? null,
+                        fn(Builder $query) => $query->whereIn('location_city_id', $data['city']),
+                    )
+                    ->when(
+                        $data['crm_font_id'] ?? null,
+                        fn(Builder $query) => $query->where('crm_font_id', $data['crm_font_id']),
+                    )
+                    ;
+            })
+            ->indicateUsing(function (array $data) use ($cities, $fonts): array {
+                $indicators = [];
+                $this->filterIndicatorForMultipleSelection($data, $indicators, $cities, 'city', 'Ciudad');
+                $this->filterIndicatorForMultipleSelection($data, $indicators, $fonts, 'crm_font_id', 'Fuente');
 
                 return $indicators;
             });

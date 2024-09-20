@@ -211,6 +211,14 @@ class DealResource extends Resource
                                 $data['code'],
                                 fn(Builder $query, $date): Builder => $query->whereLike('code', "%$date%"),
                             );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if ($data['code'] ?? null) {
+                            $indicators['code'] = 'Codigo de Factura contiene: "' . $data['code'] . '"';
+                        }
+
+                        return $indicators;
                     }),
 
                 SelectFilter::make('products.name')
@@ -218,6 +226,7 @@ class DealResource extends Resource
                     ->label('Producto')
                     ->preload(),
             ], layout: FiltersLayout::AboveContent)
+
             ->recordUrl(fn($record) => EditDeal::getUrl([$record]))
             ->columns(static::getTableColumns());
     }

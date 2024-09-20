@@ -10,10 +10,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 trait ClientDealsDataFilter
 {
-    private function getDealsDataFilter()
+    private function getDealsDataFilter(): Filter
     {
-        $products = Product::pluck('name', 'id');
-
         return Filter::make('Datos Venta')
             ->form([
                 TextInput::make('number_purchases')
@@ -46,7 +44,7 @@ trait ClientDealsDataFilter
                         fn(Builder $query) => $query->whereIn('id', $clientsIds),
                     );
             })
-            ->indicateUsing(function (array $data) use ($products): array {
+            ->indicateUsing(function (array $data): array {
                 $indicators = [];
 
                 if ($data['number_purchases'] ?? null) {

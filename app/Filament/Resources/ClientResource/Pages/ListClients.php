@@ -14,6 +14,7 @@ use App\Models\Client;
 use App\Models\User;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
@@ -30,6 +31,8 @@ use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Icetalker\FilamentTableRepeatableEntry\Infolists\Components\TableRepeatableEntry;
 use Illuminate\Contracts\View\View;
@@ -67,9 +70,10 @@ class ListClients extends ListRecords
             ->defaultSort('updated_at', 'desc')
             ->actions($this->getTableActions())
             ->columns($this->getTableColumns())
-            ->filtersFormColumns(4)
+            // ->filtersFormColumns(4)
             ->filters([
                 $this->getClientDataFilter(),
+                $this->getClientDataFilter2(),
                 $this->getDealsDataFilter(),
                 $this->getProductsBoughtDataFilter(),
                 $this->getActionsFilter(),

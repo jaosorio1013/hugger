@@ -20,7 +20,7 @@ class CreateClient extends CreateRecord
         return [];
     }
 
-    private static function getColombiaCities()
+    public static function getColombiaCities()
     {
         return Cache::rememberForever('colombia-countries', function () {
             $colombiaId = Country::where('name', 'Colombia')->value('id');

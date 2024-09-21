@@ -20,7 +20,7 @@ trait ClientDealsDataFilter
                     ->numeric(),
 
                 TextInput::make('amount_purchases')
-                    ->label('Monto Ventado')
+                    ->label('Monto Vendido')
                     ->suffix(' o más')
                     ->prefix('$')
                     ->numeric(),

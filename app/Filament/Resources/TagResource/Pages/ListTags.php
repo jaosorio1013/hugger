@@ -34,6 +34,7 @@ class ListTags extends ListRecords
     {
         return [
             Action::make('Actualizar Tags Clientes en Mailchimp')
+                ->icon('heroicon-c-arrow-path-rounded-square')
                 ->action(function () {
                     $mailchimp = $this->getMailchimpConnection();
 
@@ -56,6 +57,11 @@ class ListTags extends ListRecords
                     }
                 }),
 
+            Action::make('Ir a Mailchimp')
+                ->icon('heroicon-c-arrow-uturn-right')
+                ->url('https://us14.admin.mailchimp.com/audience/tags')
+                ->openUrlInNewTab(),
+
             ExportAction::make()->exports([
                 ExcelExport::make('Tags Por Crear en Mailchimp')
                     ->withFilename('Tags Por Crear en Mailchimp')
@@ -68,10 +74,7 @@ class ListTags extends ListRecords
 
                         return $query->whereNull('mailchimp_id');
                     }),
-            ])
-            // ->successRedirectUrl('https://us14.admin.mailchimp.com/audience/tags/')
-            // ->dispatchSuccessRedirect()
-            ,
+            ]),
 
             CreateAction::make(),
         ];
@@ -213,18 +216,27 @@ class ListTags extends ListRecords
     {
         return [
             Tour::make('dashboard')
+                ->previousButtonLabel('Anterior')
+                ->nextButtonLabel('Siguiente')
+                ->doneButtonLabel('Finalizado')
                 ->steps(
                     Step::make()
                         ->title("Segmentación de campañas!")
-                        // ->description(view('tutorial.dashboard.introduction'))
-                    ,
+                        ->description('Los TAGS del CRM se pueden sincronizar con Mailchimp teniendo en cuenta los siguientes pasos'),
+
+                    Step::make('.fi-ac-btn-action:nth-child(3)')
+                        ->title('Descargar Tags Faltantes')
+                        ->icon('heroicon-c-arrow-down-tray')
+                        ->description('Primero debemos descargar los tags faltantes en Mailchimp dando click en exportar'),
 
                     Step::make('.fi-ac-btn-action:nth-child(2)')
-                        ->title('Crear Tags')
-                        ->description('Primero debemos crear los tags faltantes en Mailchimp y para eso le damos click en exportar'),
+                        ->title('Crear Tags en Mailchimp')
+                        ->icon('heroicon-c-arrow-uturn-right')
+                        ->description('En caso de tener tags faltantes los debemos crear en Mailchimp '),
 
                     Step::make('.fi-ac-btn-action:nth-child(1)')
                         ->title('Actualizar tags en Mailchimp')
+                        ->icon('heroicon-c-arrow-path-rounded-square')
                         ->description('Ahora, puedes dar click en este botón para actualizar los tags de Mailchimp')
                         // ->icon('heroicon-o-user-circle')
                         // ->iconColor('primary')

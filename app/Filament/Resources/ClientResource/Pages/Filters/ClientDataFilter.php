@@ -75,7 +75,7 @@ trait ClientDataFilter
 
                 Select::make('city')
                     ->multiple()
-                    ->label('Tipo Empresa')
+                    ->label('Ciudad')
                     ->options($cities),
             ])
             ->query(function (Builder $query, array $data): Builder {

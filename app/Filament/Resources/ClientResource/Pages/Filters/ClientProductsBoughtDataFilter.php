@@ -12,19 +12,19 @@ use Illuminate\Support\Collection;
 
 trait ClientProductsBoughtDataFilter
 {
-    private function getProductsBoughtDataFilter()
+    private function getProductsBoughtDataFilter(): Filter
     {
         $products = Product::pluck('name', 'id');
 
         return Filter::make('Datos Producto')
             ->form([
                 Select::make('products_bought')
-                    ->label('Productos Ventados')
+                    ->label('Productos Vendidos')
                     ->multiple()
                     ->options($products),
 
                 Select::make('products_not_bought')
-                    ->label('Productos NO Ventados')
+                    ->label('Productos NO Vendidos')
                     ->multiple()
                     ->options($products),
             ])
@@ -53,8 +53,8 @@ trait ClientProductsBoughtDataFilter
             })
             ->indicateUsing(function (array $data) use ($products): array {
                 $indicators = [];
-                $this->filterIndicatorForMultipleSelection($data, $indicators, $products, 'products_bought', 'Productos Ventados');
-                $this->filterIndicatorForMultipleSelection($data, $indicators, $products, 'products_not_bought', 'Productos NO Ventados');
+                $this->filterIndicatorForMultipleSelection($data, $indicators, $products, 'products_bought', 'Productos Vendidos');
+                $this->filterIndicatorForMultipleSelection($data, $indicators, $products, 'products_not_bought', 'Productos NO Vendidos');
 
                 return $indicators;
             });

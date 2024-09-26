@@ -76,8 +76,6 @@ class MailchimpCampaignResource extends Resource
             )
             ->openRecordUrlInNewTab()
             ->actions([
-                // EditAction::make()->label(''),
-                // DeleteAction::make()->label(''),
                 RestoreAction::make(),
                 ForceDeleteAction::make(),
             ])
@@ -94,8 +92,6 @@ class MailchimpCampaignResource extends Resource
     {
         return [
             'index' => Pages\ListMailchimpCampaigns::route('/'),
-            // 'create' => Pages\CreateMailchimpCampaign::route('/create'),
-            // 'edit' => Pages\EditMailchimpCampaign::route('/{record}/edit'),
         ];
     }
 

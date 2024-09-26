@@ -59,7 +59,7 @@ class DealResource extends Resource
             ->schema(self::getFormSchema());
     }
 
-    public static function getFormSchema(bool $onRelationManager = false): array
+    public static function getFormSchema(): array
     {
         return [
             Section::make()->columns(2)->schema([
@@ -140,7 +140,8 @@ class DealResource extends Resource
                     ->numeric()
                     ->minValue(1)
                     ->default(1)
-                    ->required(),
+                    ->required()
+                    ->live(),
 
                 TextInput::make('price')
                     ->label('Valor Unitario')
@@ -151,7 +152,8 @@ class DealResource extends Resource
                     )
                     ->minValue(0)
                     ->required()
-                    ->numeric(),
+                    ->numeric()
+                    ->live(),
 
                 TextInput::make('total')
                     ->prefix('$')
@@ -161,22 +163,22 @@ class DealResource extends Resource
                     ->numeric(),
             ])
             ->live(true)
-            ->afterStateUpdated(function (Get $get, $livewire) {
-                self::updateTotals($get, $livewire);
-            })
+            ->afterStateUpdated(
+                fn(Get $get, $livewire, Set $set) => self::updateTotals($get, $livewire, $set)
+            )
+            ->afterStateHydrated(
+                fn(Get $get, $livewire, Set $set) => self::updateTotals($get, $livewire, $set)
+            )
             ->deleteAction(
-                fn(Action $action) => $action->after(
-                    fn(Get $get, $livewire) => self::updateTotals($get, $livewire)
-                ),
+                fn(Get $get, $livewire, Set $set) => self::updateTotals($get, $livewire, $set)
             )
             ->required();
     }
 
-    public static function updateTotals(Get $get, Livewire $livewire): void
+    public static function updateTotals(Get $get, Livewire $livewire, Set $set): void
     {
         // Retrieve the state path of the form. Most likely, it's `data` but could be something else.
         $statePath = $livewire->getFormStatePath();
-        // $statePath = 'data';
 
         $products = data_get($livewire, $statePath . '.details');
         if (collect($products)->isEmpty()) {

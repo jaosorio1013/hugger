@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('client_contacts', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->index();
-            $table->string('email')->nullable();
+            $table->string('email')->index();
+            $table->string('name')->nullable()->index();
             $table->string('mailchimp_id')->nullable();
             $table->string('charge')->index()->nullable();
             $table->string('phone')->nullable();

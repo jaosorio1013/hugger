@@ -4,7 +4,6 @@ namespace App\Filament\Resources\ClientResource\Pages;
 
 use App\Models\Client;
 use App\Models\CrmFont;
-use App\Models\CrmMean;
 use App\Models\Deal;
 use App\Models\User;
 use Jaosorio1013\FilamentImport\Actions\ImportAction;
@@ -25,7 +24,7 @@ trait ImportClients
         ])->pluck('name', 'id');
 
         return ImportAction::make('Importar')
-            ->exampleFile('template-clientes')
+            ->exampleFile('template-importar-clientes')
             ->icon('heroicon-s-document-arrow-up')
             ->massCreate(false)
             ->fields([
@@ -59,17 +58,17 @@ trait ImportClients
 
             ], columns: 3)
             ->handleRecordCreation(
-        function (array $data): Client {
-            $this->createClient($data);
+                function (array $data): Client {
+                    $this->createClient($data);
 
-            $this->createClientContact($data);
+                    $this->createClientContact($data);
 
-            return new Client();
-        }
-    )
-        ->after(
-            fn(Deal $deal) => redirect(ListClients::getUrl())
-        );
+                    return new Client();
+                }
+            )
+            ->after(
+                fn(Deal $deal) => redirect(ListClients::getUrl())
+            );
     }
 
     private function createClient(array $data): void
@@ -80,23 +79,51 @@ trait ImportClients
         }
 
         $client = Client::where('nit', $nit)->first();
-        if ($client) {
-            return;
+        if (!$client) {
+            $client = Client::create([
+                'nit' => $nit,
+                'name' => $data['Nombre'],
+                'type' => $this->getClientType(
+                    $data['Tipo'] ?? null
+                ),
+            ]);
         }
 
-        $this->client = Client::create([
-            'nit' => $nit,
-            'name' => $data['Nombre'],
-            'phone' => $data['Teléfono'] ?? null,
-            'email' => $data['Email'] ?? null,
-            'address' => $data['Dirección'] ?? null,
-            'location_city_id' => $this->getCity($data['Ciudad'] ?? null),
-            'user_id' => $this->getOwner($data['Responsable'] ?? null),
-            'crm_font_id' => $this->getFont($data['Fuente'] ?? null),
-            'type' => $this->getClientType(
-                $data['Tipo'] ?? null
-            ),
-        ]);
+        if (!empty($data['Teléfono'])) {
+            $client->phone = $data['Teléfono'];
+        }
+
+        if (!empty($data['Email'])) {
+            $client->email = $data['Email'];
+        }
+
+        if (!empty($data['Dirección'])) {
+            $client->address = $data['Dirección'];
+        }
+
+        if (!empty($data['Ciudad'])) {
+            $client->location_city_id = $this->getCity($data['Ciudad']);
+        }
+
+        if (!empty($data['Responsable'])) {
+            $client->user_id = $this->getOwner($data['Responsable']);
+        }
+
+        if (!empty($data['Fuente'])) {
+            $client->crm_font_id = $this->getFont($data['Fuente']);
+        }
+
+        if (!empty($data['Tipo'])) {
+            $client->type = $this->getClientType($data['Tipo']);
+        }
+
+        if (!empty($data['Nombre'])) {
+            $client->name = $data['Nombre'];
+        }
+
+        $client->save();
+
+        $this->client = $client;
     }
 
     private function getCity($ciudad)
@@ -106,8 +133,8 @@ trait ImportClients
             ->value('id');
 
         return City::query()
-            ->where('country_id', $colombiaId)
-            ->where('name', $ciudad)->value('id') ?? null;
+                ->where('country_id', $colombiaId)
+                ->where('name', $ciudad)->value('id') ?? null;
     }
 
     private function getOwner($user)
@@ -136,22 +163,26 @@ trait ImportClients
 
     private function createClientContact(array $data): void
     {
-        if (empty($data['Nombres Contactos Cliente'])) {
+        if (empty($data['Emails Contactos Cliente'])) {
             return;
         }
 
         $contact = $this->client->contacts()->firstOrCreate([
-            'name' => $data['Nombres Contactos Cliente'],
+            'email' => $data['Emails Contactos Cliente'],
         ]);
 
-        if (!$contact->wasRecentlyCreated) {
-            return;
+        if (!empty($data['Nombres Contactos Cliente'])) {
+            $contact->name = $data['Nombres Contactos Cliente'];
         }
 
-        $contact->update([
-            'phone' => $data['Teléfonos Contactos Cliente'] ?? null,
-            'email' => $data['Emails Contactos Cliente'] ?? null,
-            'charge' => $data['Cargos Contactos Cliente'] ?? null,
-        ]);
+        if (!empty($data['Teléfonos Contactos Cliente'])) {
+            $contact->phone = $data['Teléfonos Contactos Cliente'];
+        }
+
+        if (!empty($data['Cargos Contactos Cliente'])) {
+            $contact->charge = $data['Cargos Contactos Cliente'];
+        }
+
+        $contact->save();
     }
 }

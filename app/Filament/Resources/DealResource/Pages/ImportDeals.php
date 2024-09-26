@@ -21,7 +21,7 @@ class ImportDeals
     {
         return ImportAction::make('Importar Ventas')
             ->modalDescription(new HtmlString('<span style="color: #d97706;"><b>Importante:</b> !No se deben importar archivos con funciones pues causan errores!</span>'))
-            ->exampleFile('template-ventas')
+            ->exampleFile('template-importar-ventas')
             ->icon('heroicon-s-document-arrow-up')
             ->massCreate(false)
             ->fields([

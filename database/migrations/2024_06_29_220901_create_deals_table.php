@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('client_name')->nullable();
             $table->dateTime('date')->nullable();
             $table->decimal('total', 20)->nullable();
-            $table->foreignId('client_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('client_id')->nullable()->index();
 
             $table->foreignId('owner_id')->nullable()->constrained('users')->nullOnDelete();
 

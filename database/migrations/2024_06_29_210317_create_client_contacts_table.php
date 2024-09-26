@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('mailchimp_id')->nullable();
             $table->string('charge')->index()->nullable();
             $table->string('phone')->nullable();
-            $table->foreignId('client_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('client_id')->nullable()->index();
             $table->softDeletes();
             $table->timestamps();
         });

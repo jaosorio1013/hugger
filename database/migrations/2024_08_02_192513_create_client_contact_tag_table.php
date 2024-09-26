@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('client_contact_tag', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('client_contact_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('tag_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('client_contact_id')->nullable()->index();;
+            $table->foreignId('tag_id')->nullable()->index();
             $table->boolean('registered_on_mailchimp')->default(false);
             $table->timestamps();
         });

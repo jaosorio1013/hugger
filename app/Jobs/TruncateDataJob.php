@@ -9,6 +9,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class TruncateDataJob implements ShouldQueue
 {
@@ -22,10 +23,15 @@ class TruncateDataJob implements ShouldQueue
     {
         Cache::rememberForever('truncating-data', fn() => true);
 
-        Artisan::call('migrate:fresh');
-        Artisan::call('db:seed', ['class' => 'WorldSeeder']);
-        Artisan::call('db:seed', ['class' => 'UsersSeeder']);
-        Artisan::call('db:seed', ['class' => 'ProductsSeeder']);
+        DB::table('client_actions')->truncate();
+        DB::table('activity_log')->truncate();
+        DB::table('client_tag')->truncate();
+        DB::table('client_contact_tag')->truncate();
+        DB::table('tags')->truncate();
+        DB::table('client_contacts')->truncate();
+        DB::table('deal_details')->truncate();
+        DB::table('deals')->truncate();
+        DB::table('clients')->truncate();
 
         Cache::forget('truncating-data');
         Artisan::call('cache:clear');
